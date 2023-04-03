@@ -11,10 +11,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MultiProvider(
-        providers: [],
-        child: const Todo(),
+    return MultiProvider(
+      providers: const [],
+      child: MaterialApp(
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const Todo(),
+        },
       ),
     );
   }
