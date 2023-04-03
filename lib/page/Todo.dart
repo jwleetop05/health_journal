@@ -17,19 +17,17 @@ class Todo extends StatefulWidget {
 
 // tabbar 사용하는게 좋을것같음
 class _TodoState extends State<Todo> {
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              ListView()
-            ],
-          ),
+        child: Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListView(),
+          ],
         ),
-      )
-    );
+      ),
+    ));
   }
 }
