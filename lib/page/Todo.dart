@@ -19,15 +19,16 @@ class Todo extends StatefulWidget {
 class _TodoState extends State<Todo> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView(),
-          ],
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ListView(),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/page/todo.dart';
 
 void main() {
@@ -10,8 +11,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Todo(),
+    return MaterialApp(
+      home: MultiProvider(
+        providers: [],
+        child: const Todo(),
+      ),
     );
   }
 }
