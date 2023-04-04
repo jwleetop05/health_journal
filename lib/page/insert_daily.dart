@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
 
-class Insert_Daily extends StatefulWidget {
-  const Insert_Daily({Key? key}) : super(key: key);
+class InsertDaily extends StatefulWidget {
+  const InsertDaily({Key? key}) : super(key: key);
 
   @override
-  State<Insert_Daily> createState() => _Insert_DailyState();
+  State<InsertDaily> createState() => _InsertDailyState();
 }
 
 enum Stress { none, low, medium, high }
 
-class _Insert_DailyState extends State<Insert_Daily> {
+class _InsertDailyState extends State<InsertDaily> {
   Stress stress = Stress.none;
   List<String> str = ['일기', '오늘 한 일', '기타'];
   @override
@@ -59,5 +59,4 @@ class _Insert_DailyState extends State<Insert_Daily> {
         ),
       ),
     );
-  }
 }
