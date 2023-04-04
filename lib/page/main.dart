@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/page/todo_view.dart';
 import 'package:school_nurse_ofiice/util/providers.dart';
 
+import 'insert_daily.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         initialRoute: '/',
         routes: {
-          '/': (context) => const Todo(),
+          '/': (context) => const Insert_Daily(),
         },
       ),
     );
