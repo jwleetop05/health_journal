@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "824156332960",
+    "project_id": "health-diary-75f77",
+    "storage_bucket": "health-diary-75f77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824156332960:android:60464f2645930dcd1afac5",
+        "android_client_info": {
+          "package_name": "com.example.school_nurse_ofiice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "824156332960-pfq58lgafvql73fd1a8h7f65p8ip1gbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKW-JAZy6_NS_Uj5tcS-vWw7KSEzL0Rvs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "824156332960-pfq58lgafvql73fd1a8h7f65p8ip1gbp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
