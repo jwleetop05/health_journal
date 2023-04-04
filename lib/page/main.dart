@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_nurse_ofiice/page/todo.dart';
+import 'package:school_nurse_ofiice/page/todo_view.dart';
 import 'package:school_nurse_ofiice/util/providers.dart';
 
 void main() {
