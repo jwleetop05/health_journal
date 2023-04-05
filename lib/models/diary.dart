@@ -8,14 +8,16 @@ enum Stress {
 
   final String url;
 }
-enum Day {
-  morning('아침', ),
-  lunch('점심', ),
-  diner("저녁",);
 
-  const Day(this.name,);
+enum Day {
+  morning('아침'),
+  lunch('점심'),
+  diner('저녁');
+
+  const Day(this.name);
   final String name;
 }
+
 enum DiaryTab {
   write('일기'),
   todo('오늘 한 일'),
