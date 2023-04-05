@@ -1,4 +1,30 @@
-enum Stress { none, low, medium, high }
+enum Stress {
+  none('https://aaa.vvv'),
+  low(''),
+  medium(''),
+  high('');
+
+  const Stress(this.url);
+
+  final String url;
+}
+enum Day {
+  morning('아침', ),
+  lunch('점심', ),
+  diner("저녁",);
+
+  const Day(this.name,);
+  final String name;
+}
+enum DiaryTab {
+  write('일기'),
+  todo('오늘 한 일'),
+  other('기타');
+
+  const DiaryTab(this.name);
+
+  final String name;
+}
 
 class Diary {
   final String id;
