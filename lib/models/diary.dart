@@ -1,12 +1,15 @@
-enum Stress {
-  none('https://aaa.vvv'),
-  low(''),
-  medium(''),
-  high('');
+import 'dart:ui';
 
-  const Stress(this.url);
+enum Stress {
+  none('선택없음', Color(0xff000000)),
+  low('좋음', Color(0xff0000ff)),
+  medium('보통', Color(0xff00ff00)),
+  high('나쁨',Color(0xffff0000));
+
+  const Stress(this.url, this.color);
 
   final String url;
+  final Color color;
 }
 enum Day {
   morning('아침', ),

@@ -17,4 +17,18 @@ class InsertViewModel extends ChangeNotifier {
     _tab = t;
     notifyListeners();
   }
+
+  final List<bool> _selected = [true, false, false, false];
+  List<bool> get selector => _selected;
+  set selected(int idx) {
+    for(int i = 0; i < _selected.length; i++) {
+      if(idx != i) {
+        _selected[i] = false;
+      } else {
+        _selected[i] = true;
+        _stress = Stress.values[i];
+      }
+    }
+    notifyListeners();
+  }
 }
