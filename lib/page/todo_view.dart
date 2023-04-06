@@ -21,16 +21,16 @@ class _TodoState extends State<Todo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container()
-                // ListView(),
-              ],
-            ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container()
+              // ListView(),
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 }

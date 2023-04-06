@@ -327,4 +327,105 @@ class _InsertDailyState extends State<InsertDaily> {
       ),
     );
   }
+
+  Widget dailyWrite() {
+    Size size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        SizedBox(
+          width: size.width,
+          child: const Text(
+            "오늘 일기",
+            textAlign: TextAlign.start,
+          ),
+        ),
+        const SizedBox(height: 15),
+        SizedBox(
+          child: TextField(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+            ),
+            controller: _dailyController,
+            minLines: 8,
+            maxLines: 8,
+            textInputAction: TextInputAction.newline,
+            keyboardType: TextInputType.multiline,
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget dailyTodo() {
+    Size size = MediaQuery.of(context).size;
+    return SizedBox(
+      width: size.width,
+      height: size.height * 0.5,
+      child: PageView(
+        children: Day.values.map((e) {
+          final mealController = TextEditingController();
+          final exerciseController = TextEditingController();
+          return Column(
+            children: [
+              SizedBox(
+                width: size.width,
+                child: Text(
+                  e.name,
+                  style: const TextStyle(fontSize: 24),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: size.width,
+                child: Text(
+                  "${e.name}운동",
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                child: TextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  controller: mealController,
+                  minLines: 3,
+                  maxLines: 8,
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: size.width,
+                child: Text(
+                  "${e.name} 섭취음식",
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                child: TextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  controller: exerciseController,
+                  minLines: 3,
+                  maxLines: 8,
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ),
+              const SizedBox(height: 15),
+              TextButton(
+                onPressed: () {},
+                child: const Text("저장하기"),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
 }
