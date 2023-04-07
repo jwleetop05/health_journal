@@ -233,97 +233,118 @@ class _InsertDailyState extends State<InsertDaily> {
           const SizedBox(
             height: 15,
           ),
-          SizedBox(
-            width: size.width,
-            child: Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Row(
+          Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: size.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
                     children: [
                       const Text("몸무게"),
-                      TextFormField(
-                        controller: _kgController,
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (value) {
-                          if (value.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("몸무게를 적어주세요."),
-                                    duration: Duration(seconds: 1)));
-                          } else {
-                            if(num.parse(value) > 280) {
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.1,
+                        child: TextFormField(
+                          controller: _kgController,
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.done,
+                          onFieldSubmitted: (value) {
+                            if (value.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text("몸무게를 적어주세요."),
                                       duration: Duration(seconds: 1)));
-                            } else if(value.isNotEmpty && _mController.value.text.isNotEmpty) {
-                              num m = pow(double.parse(_mController.value.text) / 100, 2);
-                              num result = num.parse(value) / m;
-                              viewModel.bmi = result;
+                            } else {
+                              if (num.parse(value) > 280) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("몸무게를 적어주세요."),
+                                        duration: Duration(seconds: 1)));
+                              } else if (value.isNotEmpty &&
+                                  _mController.value.text.isNotEmpty) {
+                                num m = pow(
+                                    double.parse(_mController.value.text) / 100,
+                                    2);
+                                num result = num.parse(value) / m;
+                                viewModel.bmi = result;
+                              }
                             }
-                          }
-                        },
+                          },
+                        ),
                       )
                     ],
                   ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Row(
+                  Row(
                     children: [
                       const Text("키"),
-                      TextFormField(
-                        controller: _mController,
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (value) {
-                          if (value.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("키를 적어주세요."),
-                                    duration: Duration(seconds: 1)));
-                          } else {
-                            if(num.parse(value) > 220) {
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.1,
+                        child: TextFormField(
+                          controller: _mController,
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.done,
+                          onFieldSubmitted: (value) {
+                            if (value.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text("몸무게를 적어주세요."),
+                                      content: Text("키를 적어주세요."),
                                       duration: Duration(seconds: 1)));
-                            } else if(value.isNotEmpty && _kgController.value.text.isNotEmpty) {
-                              num m = pow(double.parse(value) / 100, 2);
-                              num result = num.parse(_kgController.value.text) / m;
-                              viewModel.bmi = result;
+                            } else {
+                              if (num.parse(value) > 220) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("몸무게를 적어주세요."),
+                                        duration: Duration(seconds: 1)));
+                              } else if (value.isNotEmpty &&
+                                  _kgController.value.text.isNotEmpty) {
+                                num m = pow(double.parse(value) / 100, 2);
+                                num result =
+                                    num.parse(_kgController.value.text) / m;
+                                viewModel.bmi = result;
+                              }
                             }
-                          }
-                        },
+                          },
+                        ),
                       )
                     ],
                   ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
           const SizedBox(
             height: 15,
           ),
-          const Text("비만도"),
-          const SizedBox(
-            height: 15,
-          ),
-          () {
-            if(viewModel.bmi >= 25.0) {
-              return const Text("비만");
-            } else if(viewModel.bmi >= 23.0 && viewModel.bmi <= 24.9) {
-              return const Text("과체중");
-            } else if(viewModel.bmi > 18.5 && viewModel.bmi <= 22.9) {
-              return const Text("정상");
-            } else if(viewModel.bmi >= 18.5) {
-              return const Text("저체중");
-            } else {
-              return const Text("입력없음");
-            }
-          }()
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("비만도 : "),
+                  () {
+                if (viewModel.bmi >= 35) {
+                  return const Text("초고도비만");
+                } else if (viewModel.bmi >= 30 && viewModel.bmi < 35) {
+                  return const Text("고도비만");
+                } else if (viewModel.bmi >= 25 && viewModel.bmi < 30) {
+                  return const Text("비만");
+                } else if (viewModel.bmi >= 23 && viewModel.bmi < 25) {
+                  return const Text("과체중");
+                } else if (viewModel.bmi > 18.5 && viewModel.bmi < 23) {
+                  return const Text("정상");
+                } else if (viewModel.bmi <= 18.5) {
+                  return const Text("저체중");
+                } else {
+                  return const Text("입력없음");
+                }
+              }()
+            ],
+          )
         ],
       ),
     );
