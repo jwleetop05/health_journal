@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/models/diary.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
-import 'package:school_nurse_ofiice/util/firebase.dart';
 
 class InsertDaily extends StatefulWidget {
   const InsertDaily({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _InsertDailyState extends State<InsertDaily> {
   final TextEditingController _sleepTimeHController = TextEditingController();
   final TextEditingController _sleepTimeMController = TextEditingController();
   final TextEditingController _kgController = TextEditingController();
+  final TextEditingController _mController = TextEditingController();
   @override
   void dispose() {
     // TODO: implement dispose
@@ -231,19 +233,97 @@ class _InsertDailyState extends State<InsertDaily> {
           const SizedBox(
             height: 15,
           ),
-          const Text("비만도"),
-          TextFormField(
-            controller: _kgController,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.done,
-            onFieldSubmitted: (value) {
-              if (int.parse(value) > 280) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("몸무게를 적어주세요."),
-                    duration: Duration(seconds: 1)));
-              }
-            },
+          SizedBox(
+            width: size.width,
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Row(
+                    children: [
+                      const Text("몸무게"),
+                      TextFormField(
+                        controller: _kgController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (value) {
+                          if (value.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("몸무게를 적어주세요."),
+                                    duration: Duration(seconds: 1)));
+                          } else {
+                            if(num.parse(value) > 280) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("몸무게를 적어주세요."),
+                                      duration: Duration(seconds: 1)));
+                            } else if(value.isNotEmpty && _mController.value.text.isNotEmpty) {
+                              num m = pow(double.parse(_mController.value.text) / 100, 2);
+                              num result = num.parse(value) / m;
+                              viewModel.bmi = result;
+                            }
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Row(
+                    children: [
+                      const Text("키"),
+                      TextFormField(
+                        controller: _mController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (value) {
+                          if (value.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("키를 적어주세요."),
+                                    duration: Duration(seconds: 1)));
+                          } else {
+                            if(num.parse(value) > 220) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("몸무게를 적어주세요."),
+                                      duration: Duration(seconds: 1)));
+                            } else if(value.isNotEmpty && _kgController.value.text.isNotEmpty) {
+                              num m = pow(double.parse(value) / 100, 2);
+                              num result = num.parse(_kgController.value.text) / m;
+                              viewModel.bmi = result;
+                            }
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
+          const SizedBox(
+            height: 15,
+          ),
+          const Text("비만도"),
+          const SizedBox(
+            height: 15,
+          ),
+          () {
+            if(viewModel.bmi >= 25.0) {
+              return const Text("비만");
+            } else if(viewModel.bmi >= 23.0 && viewModel.bmi <= 24.9) {
+              return const Text("과체중");
+            } else if(viewModel.bmi > 18.5 && viewModel.bmi <= 22.9) {
+              return const Text("정상");
+            } else if(viewModel.bmi >= 18.5) {
+              return const Text("저체중");
+            } else {
+              return const Text("입력없음");
+            }
+          }()
         ],
       ),
     );
@@ -324,107 +404,6 @@ class _InsertDailyState extends State<InsertDaily> {
             )
           ],
         ),
-      ),
-    );
-  }
-
-  Widget dailyWrite() {
-    Size size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        SizedBox(
-          width: size.width,
-          child: const Text(
-            "오늘 일기",
-            textAlign: TextAlign.start,
-          ),
-        ),
-        const SizedBox(height: 15),
-        SizedBox(
-          child: TextField(
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-            ),
-            controller: _dailyController,
-            minLines: 8,
-            maxLines: 8,
-            textInputAction: TextInputAction.newline,
-            keyboardType: TextInputType.multiline,
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget dailyTodo() {
-    Size size = MediaQuery.of(context).size;
-    return SizedBox(
-      width: size.width,
-      height: size.height * 0.5,
-      child: PageView(
-        children: Day.values.map((e) {
-          final mealController = TextEditingController();
-          final exerciseController = TextEditingController();
-          return Column(
-            children: [
-              SizedBox(
-                width: size.width,
-                child: Text(
-                  e.name,
-                  style: const TextStyle(fontSize: 24),
-                  textAlign: TextAlign.start,
-                ),
-              ),
-              const SizedBox(height: 15),
-              SizedBox(
-                width: size.width,
-                child: Text(
-                  "${e.name}운동",
-                  textAlign: TextAlign.start,
-                ),
-              ),
-              const SizedBox(height: 15),
-              SizedBox(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  controller: mealController,
-                  minLines: 3,
-                  maxLines: 8,
-                  textInputAction: TextInputAction.newline,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              const SizedBox(height: 15),
-              SizedBox(
-                width: size.width,
-                child: Text(
-                  "${e.name} 섭취음식",
-                  textAlign: TextAlign.start,
-                ),
-              ),
-              const SizedBox(height: 15),
-              SizedBox(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  controller: exerciseController,
-                  minLines: 3,
-                  maxLines: 8,
-                  textInputAction: TextInputAction.newline,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              const SizedBox(height: 15),
-              TextButton(
-                onPressed: () {},
-                child: const Text("저장하기"),
-              ),
-            ],
-          );
-        }).toList(),
       ),
     );
   }

@@ -31,4 +31,11 @@ class InsertViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  num _bmi = 0.0;
+  num get bmi => _bmi;
+  set bmi(num bmiR) {
+    _bmi = bmiR;
+    notifyListeners();
+  }
 }
