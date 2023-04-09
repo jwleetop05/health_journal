@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/models/diary.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
+import 'package:school_nurse_ofiice/util/firebase.dart';
 
 class InsertDaily extends StatefulWidget {
   const InsertDaily({Key? key}) : super(key: key);
@@ -108,6 +109,7 @@ class _InsertDailyState extends State<InsertDaily> {
   }
 
   Widget dailyTodo() {
+    InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
     Size size = MediaQuery.of(context).size;
     return SizedBox(
       width: size.width,
@@ -182,7 +184,9 @@ class _InsertDailyState extends State<InsertDaily> {
             const SizedBox(
               height: 15,
             ),
-            TextButton(onPressed: () {}, child: const Text("저장하기")),
+            TextButton(onPressed: () {
+              viewModel.setDiary(e.index, _mealController.value.text, _exerciseController.value.text);
+            }, child: const Text("저장하기")),
           ],
         );
       }).toList()),
@@ -207,22 +211,30 @@ class _InsertDailyState extends State<InsertDaily> {
             width: size.width,
             child: Align(
               alignment: Alignment.center,
-              child: ToggleButtons(
-                isSelected: viewModel.selector,
-                onPressed: (value) {
-                  viewModel.selected = value;
-                },
-                borderRadius: BorderRadius.circular(10),
-                borderWidth: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: Stress.values.asMap().entries.map(
                   (e) {
-                    return SizedBox(
-                      width: size.width * 0.2,
-                      height: size.height * 0.07,
-                      child: Text(
-                        e.value.url,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(height: 2.9),
+                    return InkWell(
+                      onTap: () {
+                        viewModel.stress = e.value;
+                        viewModel.selected = e.key;
+                      },
+                      child: Container(
+                        color: (){
+                          if(viewModel.selector.elementAt(e.key)) {
+                            return Colors.red;
+                          } else {
+                            return Colors.white;
+                          }
+                        }(),
+                        width: size.width * 0.2,
+                        height: size.height * 0.07,
+                        child: Text(
+                          e.value.url,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(height: 2.9),
+                        ),
                       ),
                     );
                   },
@@ -329,22 +341,30 @@ class _InsertDailyState extends State<InsertDaily> {
                   () {
                 if (viewModel.bmi >= 35) {
                   return const Text("초고도비만");
-                } else if (viewModel.bmi >= 30 && viewModel.bmi < 35) {
+                } else if (viewModel.bmi >= 30 ) {
                   return const Text("고도비만");
-                } else if (viewModel.bmi >= 25 && viewModel.bmi < 30) {
+                } else if (viewModel.bmi >= 25 ) {
                   return const Text("비만");
-                } else if (viewModel.bmi >= 23 && viewModel.bmi < 25) {
+                } else if (viewModel.bmi >= 23 ) {
                   return const Text("과체중");
-                } else if (viewModel.bmi > 18.5 && viewModel.bmi < 23) {
+                } else if (viewModel.bmi > 18.5) {
                   return const Text("정상");
-                } else if (viewModel.bmi <= 18.5) {
+                } else if (viewModel.bmi > 0.0 && viewModel.bmi <= 18.5) {
                   return const Text("저체중");
+                } else if(_kgController.value.text.isEmpty || _mController.value.text.isEmpty) {
+                  return const Text("입력없음");
                 } else {
                   return const Text("입력없음");
                 }
               }()
             ],
-          )
+          ),
+          TextButton(onPressed: (){
+            Diary diaryData = Diary(id: 'id', name: 'name', date: DateTime.now(),
+                text: _dailyController.value.text,
+                sleep: Duration(hours: int.parse(_sleepTimeHController.value.text),minutes: int.parse(_sleepTimeMController.value.text)), bmi: viewModel.bmi, stress: viewModel.stress, diary: viewModel.diary);
+            Firebase.firestore.collection("diaries").add(diaryData.toJson());
+          }, child: const Text("최종 저장"))
         ],
       ),
     );

@@ -18,17 +18,11 @@ class InsertViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  final List<bool> _selected = [true, false, false, false];
+  List<bool> _selected = [true, false, false, false];
   List<bool> get selector => _selected;
   set selected(int idx) {
-    for(int i = 0; i < _selected.length; i++) {
-      if(idx != i) {
-        _selected[i] = false;
-      } else {
-        _selected[i] = true;
-        _stress = Stress.values[i];
-      }
-    }
+    _selected = [false, false, false, false];
+    _selected[idx] = true;
     notifyListeners();
   }
 
@@ -37,5 +31,11 @@ class InsertViewModel extends ChangeNotifier {
   set bmi(num bmiR) {
     _bmi = bmiR;
     notifyListeners();
+  }
+
+  final List<Post?> _diary = [null,null,null];
+  List<Post ?> get diary => _diary;
+  void setDiary(int idx, String meal, String exercise) {
+    _diary[idx] = Post(meal: meal, exercise: exercise);
   }
 }

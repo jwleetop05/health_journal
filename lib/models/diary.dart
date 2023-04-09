@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:ui';
 
 enum Stress {
@@ -35,20 +36,37 @@ class Diary {
   final String id;
   final String name;
   final DateTime date;
-  final double sleep;
-  final double bmi;
+  final String text;
+  final Duration sleep;
+  final num bmi;
   final Stress stress;
-  final List<Post> diary;
+  final List<Post?> diary;
 
   const Diary({
     required this.id,
     required this.name,
     required this.date,
+    required this.text,
     required this.sleep,
     required this.bmi,
     required this.stress,
     required this.diary,
   });
+
+  factory Diary.fromJson(Map<String, dynamic> json) {
+    return Diary(id: 'id', name: 'name', date: DateTime.now(), text: json['text'],sleep: Duration(minutes: (json['sleep'] as double).toInt()), bmi: json['bmi'],
+        stress: Stress.values[json['stress']], diary: (json['diary'] as List).map((e) => Post.fromJson(e)).toList());
+  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'date': date,
+    'text': text,
+    'sleep': sleep.inSeconds / 60,
+    'bmi' : bmi,
+    'stress': stress.index,
+    'diary': diary.map((e) => e!.toJson()).toList(),
+  };
 }
 
 class Post {
@@ -59,4 +77,12 @@ class Post {
     required this.meal,
     required this.exercise,
   });
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(meal: json['meal'], exercise: json['exercise']);
+  }
+  Map<String, dynamic> toJson() => {
+    'meal' : meal,
+    'exercise' : exercise
+  };
 }
