@@ -19,49 +19,36 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: TextButton(
-        onPressed: getAPI,
-        child: Text("Google login"),
-      )
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+            child: TextButton(
+              onPressed: getAPI,
+              child: const Text("Google login"),
+            )
+        ),
+      ),
     );
   }
   Future getAPI() async {
-    final googleSignIn = GoogleSignIn(
-      scopes: [
-        'email',
-        DirectoryApi.adminDirectoryUserReadonlyScope,
-        DirectoryApi.adminDirectoryGroupReadonlyScope,
-      ],
-    );
-
-    await googleSignIn.signIn();
-
-    final authHeaders = await googleSignIn.currentUser?.authHeaders;
-    final httpClient = GoogleHttpClient(authHeaders!);
-    try {
-      final directory = DirectoryApi(httpClient);
-      final path = await directory.users.get(googleSignIn.currentUser!.id);
-      final user = await Auth.signIn();
-      if (user == null) {
-        Navigator.of(context).pushNamed('/login');
-      } else {
-        var val = jsonEncode(
-          LoginState(
-            id: googleSignIn.currentUser!.id,
-            identity: path.orgUnitPath ?? "",
-          ),
-        );
-        await Auth.storage.write(key: 'login', value: val);
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        if (path.orgUnitPath == "/교사") {
-          Navigator.of(context).pushNamed('/login');
-        } else {
-          Navigator.of(context).pushNamed('/insert');
-        }
-      }
-    } finally {
-      httpClient.close();
+    final user = await Auth.signIn();
+    if (user == null) {
+      return;
     }
+
+    switch (user.state) {
+      case UserState.student:
+        push("/insert");
+        return;
+      case UserState.teacher:
+        // push("/");
+        return;
+      default:
+        return;
+    }
+  }
+
+  void push(String route) {
+    Navigator.pushNamed(context, route);
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
 import 'package:school_nurse_ofiice/page/loginPage.dart';
+import 'package:school_nurse_ofiice/page/teacherPage.dart';
 import 'package:school_nurse_ofiice/page/todo_view_model.dart';
 import 'page/insert_daily.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/login': (context) => const LoginPage(),
           '/insert': (context) => const InsertDaily(),
+          '/teacher': (context) => const TeacherPage(),
         },
       ),
     );

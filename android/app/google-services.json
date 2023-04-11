@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "824156332960-shr9vq02pn7it14oh27gmhocrj11frjo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.school_nurse_ofiice",
+            "certificate_hash": "f70f846aa7a6a57475c8eff2c529601e74fc0a60"
+          }
+        },
+        {
           "client_id": "824156332960-pfq58lgafvql73fd1a8h7f65p8ip1gbp.apps.googleusercontent.com",
           "client_type": 3
         }
