@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
 
     switch (user.state) {
       case UserState.student:
-        push("/insert");
+        push("/todo");
         return;
       case UserState.teacher:
         // push("/");

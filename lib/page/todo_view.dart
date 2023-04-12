@@ -24,11 +24,25 @@ class _TodoState extends State<Todo> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
+            // mainAxisSize: MainAxisSize.min,
             children: [
-              Container()
-              // ListView(),
+              const Text('aaaaaaaaaa0'),
+              buildList(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: 1,
+      itemBuilder: (context, i) => SizedBox(
+        height: 90,
+        child: ListTile(
+          title: Text('$i'),
         ),
       ),
     );

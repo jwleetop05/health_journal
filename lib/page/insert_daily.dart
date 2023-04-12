@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/models/diary.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
@@ -303,7 +305,7 @@ class _InsertDailyState extends State<InsertDaily> {
                             if (num.parse(value) > 220) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("몸무게를 적어주세요."),
+                                  content: Text("키를 적어주세요."),
                                   duration: Duration(seconds: 1),
                                 ),
                               );
@@ -328,7 +330,7 @@ class _InsertDailyState extends State<InsertDaily> {
             children: [
               const Text("비만도 : "),
               () {
-                if (viewModel.bmi > 0 ||
+                if (viewModel.bmi < 0 ||
                     _kgController.value.text.isEmpty ||
                     _mController.value.text.isEmpty) {
                   return const Text("입력없음");
@@ -343,9 +345,15 @@ class _InsertDailyState extends State<InsertDaily> {
                   0: "저체중",
                 };
 
+                final a = bmis.keys.toList();
+                assert(listEquals(a, ([...a]..sort()).reversed.toList()));
+
                 for (var e in bmis.entries) {
                   if (viewModel.bmi >= e.key) {
-                    return Text(e.value);
+                    return Text(
+                      "${e.value} "
+                      "(${NumberFormat('###.##').format(viewModel.bmi)})",
+                    );
                   }
                 }
 
