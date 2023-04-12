@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:school_nurse_ofiice/page/todo_view_model.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
 
 class Todo extends StatefulWidget {
@@ -23,6 +24,7 @@ class Todo extends StatefulWidget {
 class _TodoState extends State<Todo> {
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<TodoViewModel>(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -31,6 +33,11 @@ class _TodoState extends State<Todo> {
             children: [
               const Text('aaaaaaaaaa0'),
               buildList(),
+              if (viewModel.day == DateTime.now().day)
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('수정'),
+                ),
             ],
           ),
         ),
@@ -39,6 +46,8 @@ class _TodoState extends State<Todo> {
   }
 
   Widget buildList() {
+    final viewModel = Provider.of<TodoViewModel>(context);
+
     final now = DateTime.now();
     final week = List.generate(7, (i) => now.subtract(Duration(days: i)));
     return ListView.builder(
@@ -47,6 +56,9 @@ class _TodoState extends State<Todo> {
       itemBuilder: (context, i) => SizedBox(
         height: 90,
         child: ListTile(
+          onTap: () {
+            viewModel.day = week[i].day;
+          },
           tileColor: now.day == week[i].day ? Colors.amber : Colors.white,
           leading: Text(DateFormat('MM/dd').format(week[i])),
           title: buildEditor(week[i]),
