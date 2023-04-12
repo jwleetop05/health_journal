@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:school_nurse_ofiice/util/firebase.dart';
 
 class Todo extends StatefulWidget {
   const Todo({Key? key}) : super(key: key);
@@ -36,15 +39,46 @@ class _TodoState extends State<Todo> {
   }
 
   Widget buildList() {
+    final now = DateTime.now();
+    final week = List.generate(7, (i) => now.subtract(Duration(days: i)));
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: 1,
+      itemCount: week.length,
       itemBuilder: (context, i) => SizedBox(
         height: 90,
         child: ListTile(
-          title: Text('$i'),
+          tileColor: now.day == week[i].day ? Colors.amber : Colors.white,
+          leading: Text(DateFormat('MM/dd').format(week[i])),
+          title: buildEditor(week[i]),
         ),
       ),
+    );
+  }
+
+  Widget buildEditor(DateTime dt) {
+    final date = DateTime(dt.year, dt.month, dt.day);
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firebase.firestore
+          .collection('diary')
+          .where(
+            'date',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(date),
+            isLessThan: Timestamp.fromDate(
+              date.add(const Duration(days: 1)),
+            ),
+          )
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Error');
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Text('Empty');
+        }
+
+        final data = snapshot.data?.docs[0].data();
+        return Text('$data');
+      },
     );
   }
 }
