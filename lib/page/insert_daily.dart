@@ -77,9 +77,12 @@ class _InsertDailyState extends State<InsertDaily> {
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (value) {
                   if (int.parse(value) > 60) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
                         content: Text("정확한 시간을 입력해주세요"),
-                        duration: Duration(seconds: 1)));
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
                   }
                 },
               ),
@@ -331,23 +334,19 @@ class _InsertDailyState extends State<InsertDaily> {
                   return const Text("입력없음");
                 }
 
-                if (viewModel.bmi >= 35) {
-                  return const Text("초고도비만");
-                }
-                if (viewModel.bmi >= 30) {
-                  return const Text("고도비만");
-                }
-                if (viewModel.bmi >= 25) {
-                  return const Text("비만");
-                }
-                if (viewModel.bmi >= 23) {
-                  return const Text("과체중");
-                }
-                if (viewModel.bmi > 18.5) {
-                  return const Text("정상");
-                }
-                if (viewModel.bmi <= 18.5) {
-                  return const Text("저체중");
+                final bmis = {
+                  35: "초고도비만",
+                  30: "고도비만",
+                  25: "비만",
+                  23: "과체중",
+                  18.5: "정상",
+                  0: "저체중",
+                };
+
+                for (var e in bmis.entries) {
+                  if (viewModel.bmi >= e.key) {
+                    return Text(e.value);
+                  }
                 }
 
                 return const Text("입력없음");
