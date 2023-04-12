@@ -1,11 +1,12 @@
-import 'dart:ffi';
 import 'dart:ui';
+
+import 'package:school_nurse_ofiice/models/json.dart';
 
 enum Stress {
   none('선택없음', Color(0xff000000)),
   low('좋음', Color(0xff0000ff)),
   medium('보통', Color(0xff00ff00)),
-  high('나쁨',Color(0xffff0000));
+  high('나쁨', Color(0xffff0000));
 
   const Stress(this.url, this.color);
 
@@ -53,20 +54,28 @@ class Diary {
     required this.diary,
   });
 
-  factory Diary.fromJson(Map<String, dynamic> json) {
-    return Diary(id: 'id', name: 'name', date: DateTime.now(), text: json['text'],sleep: Duration(minutes: (json['sleep'] as double).toInt()), bmi: json['bmi'],
-        stress: Stress.values[json['stress']], diary: (json['diary'] as List).map((e) => Post.fromJson(e)).toList());
+  factory Diary.fromJson(JSON json) {
+    return Diary(
+      id: 'id',
+      name: 'name',
+      date: DateTime.now(),
+      text: json['text'],
+      sleep: Duration(minutes: (json['sleep'] as double).toInt()),
+      bmi: json['bmi'],
+      stress: Stress.values[json['stress']],
+      diary: (json['diary'] as List).map((e) => Post.fromJson(e)).toList(),
+    );
   }
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'date': date,
-    'text': text,
-    'sleep': sleep.inSeconds / 60,
-    'bmi' : bmi,
-    'stress': stress.index,
-    'diary': diary.map((e) => e!.toJson()).toList(),
-  };
+  JSON toJson() => {
+        'id': id,
+        'name': name,
+        'date': date,
+        'text': text,
+        'sleep': sleep.inSeconds / 60,
+        'bmi': bmi,
+        'stress': stress.index,
+        'diary': diary.map((e) => e!.toJson()).toList(),
+      };
 }
 
 class Post {
@@ -78,11 +87,14 @@ class Post {
     required this.exercise,
   });
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(meal: json['meal'], exercise: json['exercise']);
+  factory Post.fromJson(JSON json) {
+    return Post(
+      meal: json['meal'],
+      exercise: json['exercise'],
+    );
   }
-  Map<String, dynamic> toJson() => {
-    'meal' : meal,
-    'exercise' : exercise
-  };
+  JSON toJson() => {
+        'meal': meal,
+        'exercise': exercise,
+      };
 }

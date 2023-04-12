@@ -1,13 +1,7 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis/admin/directory_v1.dart';
 import 'package:school_nurse_ofiice/util/auth.dart';
 
 import '../models/user.dart';
-import '../util/googleHttpClient.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -22,14 +16,15 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-            child: TextButton(
-              onPressed: getAPI,
-              child: const Text("Google login"),
-            )
+          child: TextButton(
+            onPressed: getAPI,
+            child: const Text("Google login"),
+          ),
         ),
       ),
     );
   }
+
   Future getAPI() async {
     final user = await Auth.signIn();
     if (user == null) {

@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/admin/directory_v1.dart';
+import 'package:school_nurse_ofiice/models/json.dart';
 import 'package:school_nurse_ofiice/models/user.dart';
-import 'package:school_nurse_ofiice/util/googleHttpClient.dart';
+import 'package:school_nurse_ofiice/util/google_http_client.dart';
 
 class Auth {
   static const _storage = FlutterSecureStorage();
@@ -20,8 +21,7 @@ class Auth {
     );
     print("아아아 ${111}");
     final user = await sign.signIn();
-    if (user == null) {
-    }
+    if (user == null) {}
     final httpClient = GoogleHttpClient(await user!.authHeaders);
     try {
       final directory = DirectoryApi(httpClient);
@@ -37,16 +37,15 @@ class Auth {
       httpClient.close();
     }
   }
-  
+
   static Future<void> signOut() async {
     final sign = GoogleSignIn();
     sign.signOut();
   }
+
   Future<UserState> checkInfo() async {
     userInfo = await _storage.read(key: 'login') ?? '{}';
-    LoginState state = LoginState.fromJson(
-      jsonDecode(userInfo) as Map<String, dynamic>,
-    );
+    LoginState state = LoginState.fromJson(jsonDecode(userInfo) as JSON);
 
     return UserState.byLocale(state.identity);
   }

@@ -19,9 +19,9 @@ class _InsertDailyState extends State<InsertDaily> {
   final TextEditingController _sleepTimeMController = TextEditingController();
   final TextEditingController _kgController = TextEditingController();
   final TextEditingController _mController = TextEditingController();
+
   @override
   void dispose() {
-    // TODO: implement dispose
     _dailyController.dispose();
     _sleepTimeHController.dispose();
     _sleepTimeMController.dispose();
@@ -39,9 +39,7 @@ class _InsertDailyState extends State<InsertDaily> {
             textAlign: TextAlign.start,
           ),
         ),
-        const SizedBox(
-          height: 15,
-        ),
+        const SizedBox(height: 15),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -57,9 +55,12 @@ class _InsertDailyState extends State<InsertDaily> {
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (value) {
                   if (int.parse(value) > 24) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
                         content: Text("정확한 시간을 입력해주세요"),
-                        duration: Duration(seconds: 1)));
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
                   }
                 },
               ),
@@ -89,9 +90,7 @@ class _InsertDailyState extends State<InsertDaily> {
             ),
           ],
         ),
-        const SizedBox(
-          height: 15,
-        ),
+        const SizedBox(height: 15),
         SizedBox(
           child: TextField(
             decoration: const InputDecoration(
@@ -115,81 +114,76 @@ class _InsertDailyState extends State<InsertDaily> {
       width: size.width,
       height: size.height * 0.5,
       child: PageView(
-          children: Day.values.map((e) {
-        final TextEditingController _mealController = TextEditingController();
-        final TextEditingController _exerciseController =
-            TextEditingController();
-        return Column(
-          children: [
-            SizedBox(
-              width: size.width,
-              child: Text(
-                e.name,
-                style: const TextStyle(fontSize: 24),
-                textAlign: TextAlign.start,
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            SizedBox(
-              width: size.width * 0.85,
-              child: Text(
-                "${e.name}운동",
-                textAlign: TextAlign.start,
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            SizedBox(
-              width: size.width * 0.85,
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+        children: Day.values.map((e) {
+          final mealController = TextEditingController();
+          final exerciseController = TextEditingController();
+          return Column(
+            children: [
+              SizedBox(
+                width: size.width,
+                child: Text(
+                  e.name,
+                  style: const TextStyle(fontSize: 24),
+                  textAlign: TextAlign.start,
                 ),
-                controller: _mealController,
-                minLines: 3,
-                maxLines: 8,
-                textInputAction: TextInputAction.newline,
-                keyboardType: TextInputType.multiline,
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            SizedBox(
-              width: size.width * 0.85,
-              child: Text(
-                "${e.name} 섭취음식",
-                textAlign: TextAlign.start,
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            SizedBox(
-              width: size.width * 0.85,
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: size.width * 0.85,
+                child: Text(
+                  "${e.name}운동",
+                  textAlign: TextAlign.start,
                 ),
-                controller: _exerciseController,
-                minLines: 3,
-                maxLines: 8,
-                textInputAction: TextInputAction.newline,
-                keyboardType: TextInputType.multiline,
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextButton(onPressed: () {
-              viewModel.setDiary(e.index, _mealController.value.text, _exerciseController.value.text);
-            }, child: const Text("저장하기")),
-          ],
-        );
-      }).toList()),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: size.width * 0.85,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  controller: mealController,
+                  minLines: 3,
+                  maxLines: 8,
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: size.width * 0.85,
+                child: Text(
+                  "${e.name} 섭취음식",
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: size.width * 0.85,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  controller: exerciseController,
+                  minLines: 3,
+                  maxLines: 8,
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                ),
+              ),
+              const SizedBox(height: 15),
+              TextButton(
+                onPressed: () => viewModel.setDiary(
+                  e.index,
+                  mealController.value.text,
+                  exerciseController.value.text,
+                ),
+                child: const Text("저장하기"),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -204,9 +198,7 @@ class _InsertDailyState extends State<InsertDaily> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text("스트레스"),
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15),
           SizedBox(
             width: size.width,
             child: Align(
@@ -221,13 +213,9 @@ class _InsertDailyState extends State<InsertDaily> {
                         viewModel.selected = e.key;
                       },
                       child: Container(
-                        color: (){
-                          if(viewModel.selector.elementAt(e.key)) {
-                            return Colors.red;
-                          } else {
-                            return Colors.white;
-                          }
-                        }(),
+                        color: viewModel.selector.elementAt(e.key)
+                            ? Colors.red
+                            : Colors.white,
                         width: size.width * 0.2,
                         height: size.height * 0.07,
                         child: Text(
@@ -242,9 +230,7 @@ class _InsertDailyState extends State<InsertDaily> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15),
           Align(
             alignment: Alignment.center,
             child: SizedBox(
@@ -255,9 +241,7 @@ class _InsertDailyState extends State<InsertDaily> {
                   Row(
                     children: [
                       const Text("몸무게"),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
                       SizedBox(
                         width: size.width * 0.1,
                         child: TextFormField(
@@ -267,23 +251,26 @@ class _InsertDailyState extends State<InsertDaily> {
                           onFieldSubmitted: (value) {
                             if (value.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("몸무게를 적어주세요."),
-                                      duration: Duration(seconds: 1)));
-                            } else {
-                              if (num.parse(value) > 280) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("몸무게를 적어주세요."),
-                                        duration: Duration(seconds: 1)));
-                              } else if (value.isNotEmpty &&
-                                  _mController.value.text.isNotEmpty) {
-                                num m = pow(
-                                    double.parse(_mController.value.text) / 100,
-                                    2);
-                                num result = num.parse(value) / m;
-                                viewModel.bmi = result;
-                              }
+                                const SnackBar(
+                                  content: Text("몸무게를 적어주세요."),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                              return;
+                            }
+                            if (num.parse(value) > 280) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("몸무게를 적어주세요."),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                              return;
+                            }
+                            if (_mController.value.text.isNotEmpty) {
+                              num raw = double.parse(_mController.value.text);
+                              num res = num.parse(value) / pow(raw / 100, 2);
+                              viewModel.bmi = res;
                             }
                           },
                         ),
@@ -293,9 +280,7 @@ class _InsertDailyState extends State<InsertDaily> {
                   Row(
                     children: [
                       const Text("키"),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
                       SizedBox(
                         width: size.width * 0.1,
                         child: TextFormField(
@@ -305,22 +290,25 @@ class _InsertDailyState extends State<InsertDaily> {
                           onFieldSubmitted: (value) {
                             if (value.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("키를 적어주세요."),
-                                      duration: Duration(seconds: 1)));
-                            } else {
-                              if (num.parse(value) > 220) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("몸무게를 적어주세요."),
-                                        duration: Duration(seconds: 1)));
-                              } else if (value.isNotEmpty &&
-                                  _kgController.value.text.isNotEmpty) {
-                                num m = pow(double.parse(value) / 100, 2);
-                                num result =
-                                    num.parse(_kgController.value.text) / m;
-                                viewModel.bmi = result;
-                              }
+                                const SnackBar(
+                                  content: Text("키를 적어주세요."),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                              return;
+                            }
+                            if (num.parse(value) > 220) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("몸무게를 적어주세요."),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            }
+                            if (_kgController.value.text.isNotEmpty) {
+                              num m = pow(double.parse(value) / 100, 2);
+                              num res = num.parse(_kgController.value.text) / m;
+                              viewModel.bmi = res;
                             }
                           },
                         ),
@@ -331,40 +319,60 @@ class _InsertDailyState extends State<InsertDaily> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text("비만도 : "),
-                  () {
-                if (viewModel.bmi >= 35) {
-                  return const Text("초고도비만");
-                } else if (viewModel.bmi >= 30 ) {
-                  return const Text("고도비만");
-                } else if (viewModel.bmi >= 25 ) {
-                  return const Text("비만");
-                } else if (viewModel.bmi >= 23 ) {
-                  return const Text("과체중");
-                } else if (viewModel.bmi > 18.5) {
-                  return const Text("정상");
-                } else if (viewModel.bmi > 0.0 && viewModel.bmi <= 18.5) {
-                  return const Text("저체중");
-                } else if(_kgController.value.text.isEmpty || _mController.value.text.isEmpty) {
-                  return const Text("입력없음");
-                } else {
+              () {
+                if (viewModel.bmi > 0 ||
+                    _kgController.value.text.isEmpty ||
+                    _mController.value.text.isEmpty) {
                   return const Text("입력없음");
                 }
-              }()
+
+                if (viewModel.bmi >= 35) {
+                  return const Text("초고도비만");
+                }
+                if (viewModel.bmi >= 30) {
+                  return const Text("고도비만");
+                }
+                if (viewModel.bmi >= 25) {
+                  return const Text("비만");
+                }
+                if (viewModel.bmi >= 23) {
+                  return const Text("과체중");
+                }
+                if (viewModel.bmi > 18.5) {
+                  return const Text("정상");
+                }
+                if (viewModel.bmi <= 18.5) {
+                  return const Text("저체중");
+                }
+
+                return const Text("입력없음");
+              }(),
             ],
           ),
-          TextButton(onPressed: (){
-            Diary diaryData = Diary(id: 'id', name: 'name', date: DateTime.now(),
+          TextButton(
+            onPressed: () {
+              Diary diaryData = Diary(
+                id: 'id',
+                name: 'name',
+                date: DateTime.now(),
                 text: _dailyController.value.text,
-                sleep: Duration(hours: int.parse(_sleepTimeHController.value.text),minutes: int.parse(_sleepTimeMController.value.text)), bmi: viewModel.bmi, stress: viewModel.stress, diary: viewModel.diary);
-            Firebase.firestore.collection("diaries").add(diaryData.toJson());
-          }, child: const Text("최종 저장"))
+                sleep: Duration(
+                  hours: int.parse(_sleepTimeHController.value.text),
+                  minutes: int.parse(_sleepTimeMController.value.text),
+                ),
+                bmi: viewModel.bmi,
+                stress: viewModel.stress,
+                diary: viewModel.diary,
+              );
+              Firebase.firestore.collection("diaries").add(diaryData.toJson());
+            },
+            child: const Text("최종 저장"),
+          ),
         ],
       ),
     );
