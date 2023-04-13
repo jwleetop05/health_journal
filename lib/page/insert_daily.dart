@@ -197,8 +197,7 @@ class _InsertDailyState extends State<InsertDaily> {
   Widget dailyOther() {
     Size size = MediaQuery.of(context).size;
     InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
-    final args =
-        ModalRoute.of(context)!.settings.arguments as UserDateArguments;
+    final args = ModalRoute.of(context)!.settings.arguments as UserDateArgs;
     final date = DateTime(args.date.year, args.date.month, args.date.day);
     return SizedBox(
       width: size.width,

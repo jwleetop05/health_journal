@@ -44,6 +44,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void push(String route, UserData user) {
-    Navigator.pushNamed(context, route, arguments: LoginArguments(user));
+    Navigator.pushNamed(context, route, arguments: LoginArgs(user));
   }
 }

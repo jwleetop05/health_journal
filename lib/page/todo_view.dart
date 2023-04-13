@@ -53,7 +53,7 @@ class _TodoState extends State<Todo> {
 
   Widget buildList() {
     final viewModel = Provider.of<TodoViewModel>(context);
-    final args = ModalRoute.of(context)!.settings.arguments as LoginArguments;
+    final args = ModalRoute.of(context)!.settings.arguments as LoginArgs;
     final now = DateTime.now();
     final week = List.generate(7, (i) => now.subtract(Duration(days: i)));
     return ListView.builder(
@@ -64,9 +64,11 @@ class _TodoState extends State<Todo> {
         child: ListTile(
           onTap: () {
             viewModel.day = week[i].day;
-            Navigator.pushNamed(context, '/insert',
-                arguments: UserDateArguments(
-                    week[i], args.user.name, args.user.email));
+            Navigator.pushNamed(
+              context,
+              '/insert',
+              arguments: UserDateArgs(week[i], args.user.name, args.user.email),
+            );
           },
           tileColor: now.day == week[i].day ? Colors.amber : Colors.white,
           leading: Text(DateFormat('MM/dd').format(week[i])),
