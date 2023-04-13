@@ -197,7 +197,9 @@ class _InsertDailyState extends State<InsertDaily> {
   Widget dailyOther() {
     Size size = MediaQuery.of(context).size;
     InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
-    final args = ModalRoute.of(context)!.settings.arguments as UserDateArguments;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as UserDateArguments;
+    final date = DateTime(args.date.year, args.date.month, args.date.day);
     print(viewModel.selector);
     return SizedBox(
       width: size.width,
@@ -364,26 +366,81 @@ class _InsertDailyState extends State<InsertDaily> {
               }(),
             ],
           ),
-          TextButton(
-            onPressed: () {
-              Diary diaryData = Diary(
-                id: args.email,
-                name: args.name,
-                date: args.date,
-                text: _dailyController.value.text,
-                sleep: Duration(
-                  hours: int.parse(_sleepTimeHController.value.text),
-                  minutes: int.parse(_sleepTimeMController.value.text),
-                ),
-                bmi: viewModel.bmi,
-                stress: viewModel.stress,
-                diary: viewModel.diary,
+          StreamBuilder<QuerySnapshot>(
+            stream: Firebase.firestore
+                .collection("diaries")
+                .where(
+                  'date',
+                  isGreaterThanOrEqualTo: Timestamp.fromDate(date),
+                  isLessThan: Timestamp.fromDate(
+                    date.add(const Duration(days: 1)),
+                  ),
+                )
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Error');
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return TextButton(
+                  onPressed: () {
+                    Diary diaryData = Diary(
+                      id: args.email,
+                      name: args.name,
+                      date: args.date,
+                      text: _dailyController.value.text,
+                      sleep: Duration(
+                        hours: int.parse(_sleepTimeHController.value.text),
+                        minutes: int.parse(_sleepTimeMController.value.text),
+                      ),
+                      bmi: viewModel.bmi,
+                      stress: viewModel.stress,
+                      diary: viewModel.diary,
+                    );
+                    Firebase.firestore
+                        .collection("diaries")
+                        .add(diaryData.toJson());
+                  },
+                  child: const Text("최종 저장"),
+                );
+              }
+              return TextButton(
+                onPressed: () async {
+                  Diary diaryData = Diary(
+                    id: args.email,
+                    name: args.name,
+                    date: args.date,
+                    text: _dailyController.value.text,
+                    sleep: Duration(
+                      hours: int.parse(_sleepTimeHController.value.text),
+                      minutes: int.parse(_sleepTimeMController.value.text),
+                    ),
+                    bmi: viewModel.bmi,
+                    stress: viewModel.stress,
+                    diary: viewModel.diary,
+                  );
+                  Firebase.firestore
+                      .collection("diaries")
+                      .doc(await Firebase.firestore
+                          .collection("diaries")
+                          .where(
+                            'date',
+                            isGreaterThanOrEqualTo: Timestamp.fromDate(date),
+                            isLessThan: Timestamp.fromDate(
+                              date.add(const Duration(days: 1)),
+                            ),
+                          )
+                          .get()
+                          .then((value) {
+                        for (var docSnapshot in value.docs) {
+                          return docSnapshot.id;
+                        }
+                      }))
+                      .set(diaryData.toJson());
+                },
+                child: const Text("수정"),
               );
-              Firebase.firestore.collection("diaries").add(diaryData.toJson());
             },
-            child: () {
-              return const Text("최종 저장");
-            }(),
           ),
         ],
       ),

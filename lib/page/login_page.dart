@@ -31,7 +31,6 @@ class _LoginPageState extends State<LoginPage> {
     if (user == null) {
       return;
     }
-
     switch (user.state) {
       case UserState.student:
         push("/todo", user);

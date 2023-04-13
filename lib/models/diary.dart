@@ -37,9 +37,9 @@ class Diary {
   final String id;
   final String name;
   final DateTime date;
-  final String text;
+  final String? text;
   final Duration sleep;
-  final num bmi;
+  final num? bmi;
   final Stress stress;
   final List<Post?> diary;
 
