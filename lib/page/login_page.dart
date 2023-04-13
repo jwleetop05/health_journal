@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_nurse_ofiice/models/argumentData.dart';
 import 'package:school_nurse_ofiice/util/auth.dart';
 
+import '../models/argument_data.dart';
 import '../models/user.dart';
 
 class LoginPage extends StatefulWidget {

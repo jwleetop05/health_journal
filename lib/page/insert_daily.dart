@@ -5,10 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:school_nurse_ofiice/models/argumentData.dart';
 import 'package:school_nurse_ofiice/models/diary.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
+
+import '../models/argument_data.dart';
 
 class InsertDaily extends StatefulWidget {
   const InsertDaily({Key? key}) : super(key: key);
