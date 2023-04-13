@@ -79,7 +79,7 @@ class _TodoState extends State<Todo> {
   Widget buildEditor(DateTime dt) {
     final date = DateTime(dt.year, dt.month, dt.day);
     return StreamBuilder<QuerySnapshot>(
-      stream: Firebase.getDiaryfromDate(
+      stream: Firebase.queryDiaryfromDate(
         isGtEq: Timestamp.fromDate(date),
         isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
       ).snapshots(),

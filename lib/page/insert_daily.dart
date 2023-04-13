@@ -366,7 +366,7 @@ class _InsertDailyState extends State<InsertDaily> {
             ],
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: Firebase.getDiaryfromDate(
+            stream: Firebase.queryDiaryfromDate(
               isGtEq: Timestamp.fromDate(date),
               isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
             ).snapshots(),
@@ -411,7 +411,7 @@ class _InsertDailyState extends State<InsertDaily> {
                     diary: viewModel.diary,
                   );
 
-                  final diary = await Firebase.getDiaryfromDate(
+                  final diary = await Firebase.queryDiaryfromDate(
                     isGtEq: Timestamp.fromDate(date),
                     isLt: Timestamp.fromDate(
                       date.add(const Duration(days: 1)),

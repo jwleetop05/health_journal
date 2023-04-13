@@ -8,7 +8,7 @@ class Firebase {
 
   static Future<void> write(String a) async {}
 
-  static Query getDiaryfromDate({
+  static Query queryDiaryfromDate({
     Timestamp? isEq,
     Timestamp? isNotEq,
     Timestamp? isGtEq,
