@@ -19,7 +19,6 @@ class Auth {
         DirectoryApi.adminDirectoryUserScope,
       ],
     );
-    print("아아아 ${111}");
     final user = await sign.signIn();
     if (user == null) {}
     final httpClient = GoogleHttpClient(await user!.authHeaders);

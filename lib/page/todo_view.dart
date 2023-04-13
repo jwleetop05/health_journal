@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:school_nurse_ofiice/models/argumentData.dart';
 import 'package:school_nurse_ofiice/page/todo_view_model.dart';
+import 'package:school_nurse_ofiice/util/auth.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
 
 class Todo extends StatefulWidget {
@@ -31,7 +33,9 @@ class _TodoState extends State<Todo> {
           child: Column(
             // mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('aaaaaaaaaa0'),
+              TextButton(onPressed: (){
+                Auth.signOut();
+              }, child: const Text("로그아웃")),
               buildList(),
               if (viewModel.day == DateTime.now().day)
                 ElevatedButton(
@@ -47,7 +51,7 @@ class _TodoState extends State<Todo> {
 
   Widget buildList() {
     final viewModel = Provider.of<TodoViewModel>(context);
-
+    final args = ModalRoute.of(context)!.settings.arguments as LoginArguments;
     final now = DateTime.now();
     final week = List.generate(7, (i) => now.subtract(Duration(days: i)));
     return ListView.builder(
@@ -58,6 +62,7 @@ class _TodoState extends State<Todo> {
         child: ListTile(
           onTap: () {
             viewModel.day = week[i].day;
+            Navigator.pushNamed(context, '/insert', arguments: UserDateArguments(week[i], args.user.name, args.user.email));
           },
           tileColor: now.day == week[i].day ? Colors.amber : Colors.white,
           leading: Text(DateFormat('MM/dd').format(week[i])),
@@ -71,7 +76,7 @@ class _TodoState extends State<Todo> {
     final date = DateTime(dt.year, dt.month, dt.day);
     return StreamBuilder<QuerySnapshot>(
       stream: Firebase.firestore
-          .collection('diary')
+          .collection('diaries')
           .where(
             'date',
             isGreaterThanOrEqualTo: Timestamp.fromDate(date),
@@ -87,8 +92,7 @@ class _TodoState extends State<Todo> {
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Text('Empty');
         }
-
-        final data = snapshot.data?.docs[0].data();
+        final data = DateFormat('yyyy-MM-dd-hh-mm').format(snapshot.data?.docs[0]['date'].toDate());
         return Text('$data');
       },
     );

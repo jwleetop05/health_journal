@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:school_nurse_ofiice/models/argumentData.dart';
 import 'package:school_nurse_ofiice/models/diary.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
@@ -195,6 +197,7 @@ class _InsertDailyState extends State<InsertDaily> {
   Widget dailyOther() {
     Size size = MediaQuery.of(context).size;
     InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
+    final args = ModalRoute.of(context)!.settings.arguments as UserDateArguments;
     print(viewModel.selector);
     return SizedBox(
       width: size.width,
@@ -364,9 +367,9 @@ class _InsertDailyState extends State<InsertDaily> {
           TextButton(
             onPressed: () {
               Diary diaryData = Diary(
-                id: 'id',
-                name: 'name',
-                date: DateTime.now(),
+                id: args.email,
+                name: args.name,
+                date: args.date,
                 text: _dailyController.value.text,
                 sleep: Duration(
                   hours: int.parse(_sleepTimeHController.value.text),
@@ -378,7 +381,9 @@ class _InsertDailyState extends State<InsertDaily> {
               );
               Firebase.firestore.collection("diaries").add(diaryData.toJson());
             },
-            child: const Text("최종 저장"),
+            child: () {
+              return const Text("최종 저장");
+            }(),
           ),
         ],
       ),
