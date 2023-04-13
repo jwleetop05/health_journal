@@ -33,9 +33,11 @@ class _TodoState extends State<Todo> {
           child: Column(
             // mainAxisSize: MainAxisSize.min,
             children: [
-              TextButton(onPressed: (){
-                Auth.signOut();
-              }, child: const Text("로그아웃")),
+              TextButton(
+                  onPressed: () {
+                    Auth.signOut();
+                  },
+                  child: const Text("로그아웃")),
               buildList(),
               if (viewModel.day == DateTime.now().day)
                 ElevatedButton(
@@ -62,7 +64,9 @@ class _TodoState extends State<Todo> {
         child: ListTile(
           onTap: () {
             viewModel.day = week[i].day;
-            Navigator.pushNamed(context, '/insert', arguments: UserDateArguments(week[i], args.user.name, args.user.email));
+            Navigator.pushNamed(context, '/insert',
+                arguments: UserDateArguments(
+                    week[i], args.user.name, args.user.email));
           },
           tileColor: now.day == week[i].day ? Colors.amber : Colors.white,
           leading: Text(DateFormat('MM/dd').format(week[i])),
@@ -75,16 +79,10 @@ class _TodoState extends State<Todo> {
   Widget buildEditor(DateTime dt) {
     final date = DateTime(dt.year, dt.month, dt.day);
     return StreamBuilder<QuerySnapshot>(
-      stream: Firebase.firestore
-          .collection('diaries')
-          .where(
-            'date',
-            isGreaterThanOrEqualTo: Timestamp.fromDate(date),
-            isLessThan: Timestamp.fromDate(
-              date.add(const Duration(days: 1)),
-            ),
-          )
-          .snapshots(),
+      stream: Firebase.getDiaryfromDate(
+        isGtEq: Timestamp.fromDate(date),
+        isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
+      ).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('Error');
@@ -92,7 +90,8 @@ class _TodoState extends State<Todo> {
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Text('Empty');
         }
-        final data = DateFormat('yyyy-MM-dd-hh-mm').format(snapshot.data?.docs[0]['date'].toDate());
+        final data = DateFormat('yyyy-MM-dd-hh-mm')
+            .format(snapshot.data?.docs[0]['date'].toDate());
         return Text('$data');
       },
     );

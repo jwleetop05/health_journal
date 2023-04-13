@@ -200,7 +200,6 @@ class _InsertDailyState extends State<InsertDaily> {
     final args =
         ModalRoute.of(context)!.settings.arguments as UserDateArguments;
     final date = DateTime(args.date.year, args.date.month, args.date.day);
-    print(viewModel.selector);
     return SizedBox(
       width: size.width,
       height: size.height * 0.5,
@@ -367,16 +366,10 @@ class _InsertDailyState extends State<InsertDaily> {
             ],
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: Firebase.firestore
-                .collection("diaries")
-                .where(
-                  'date',
-                  isGreaterThanOrEqualTo: Timestamp.fromDate(date),
-                  isLessThan: Timestamp.fromDate(
-                    date.add(const Duration(days: 1)),
-                  ),
-                )
-                .snapshots(),
+            stream: Firebase.getDiaryfromDate(
+              isGtEq: Timestamp.fromDate(date),
+              isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
+            ).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Error');
@@ -397,9 +390,7 @@ class _InsertDailyState extends State<InsertDaily> {
                       stress: viewModel.stress,
                       diary: viewModel.diary,
                     );
-                    Firebase.firestore
-                        .collection("diaries")
-                        .add(diaryData.toJson());
+                    Firebase.diaries.add(diaryData.toJson());
                   },
                   child: const Text("최종 저장"),
                 );
@@ -419,23 +410,16 @@ class _InsertDailyState extends State<InsertDaily> {
                     stress: viewModel.stress,
                     diary: viewModel.diary,
                   );
-                  Firebase.firestore
-                      .collection("diaries")
-                      .doc(await Firebase.firestore
-                          .collection("diaries")
-                          .where(
-                            'date',
-                            isGreaterThanOrEqualTo: Timestamp.fromDate(date),
-                            isLessThan: Timestamp.fromDate(
-                              date.add(const Duration(days: 1)),
-                            ),
-                          )
-                          .get()
-                          .then((value) {
-                        for (var docSnapshot in value.docs) {
-                          return docSnapshot.id;
-                        }
-                      }))
+
+                  final diary = await Firebase.getDiaryfromDate(
+                    isGtEq: Timestamp.fromDate(date),
+                    isLt: Timestamp.fromDate(
+                      date.add(const Duration(days: 1)),
+                    ),
+                  ).get();
+
+                  Firebase.diaries
+                      .doc(diary.docs.first.id)
                       .set(diaryData.toJson());
                 },
                 child: const Text("수정"),
