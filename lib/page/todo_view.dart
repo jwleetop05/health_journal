@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:school_nurse_ofiice/models/argumentData.dart';
+import 'package:school_nurse_ofiice/models/argument_data.dart';
 import 'package:school_nurse_ofiice/page/todo_view_model.dart';
 import 'package:school_nurse_ofiice/util/auth.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
@@ -34,10 +34,11 @@ class _TodoState extends State<Todo> {
             // mainAxisSize: MainAxisSize.min,
             children: [
               TextButton(
-                  onPressed: () {
-                    Auth.signOut();
-                  },
-                  child: const Text("로그아웃")),
+                onPressed: () {
+                  Auth.signOut();
+                },
+                child: const Text("로그아웃"),
+              ),
               buildList(),
               if (viewModel.day == DateTime.now().day)
                 ElevatedButton(
