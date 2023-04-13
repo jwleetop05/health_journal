@@ -373,43 +373,30 @@ class _InsertDailyState extends State<InsertDaily> {
               if (snapshot.hasError) {
                 return const Text('Error');
               }
+
+              final diaryData = Diary(
+                id: args.email,
+                name: args.name,
+                date: args.date,
+                text: _dailyController.value.text,
+                sleep: Duration(
+                  hours: int.parse(_sleepTimeHController.value.text),
+                  minutes: int.parse(_sleepTimeMController.value.text),
+                ),
+                bmi: viewModel.bmi,
+                stress: viewModel.stress,
+                diary: viewModel.diary,
+              );
+
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return TextButton(
-                  onPressed: () {
-                    Diary diaryData = Diary(
-                      id: args.email,
-                      name: args.name,
-                      date: args.date,
-                      text: _dailyController.value.text,
-                      sleep: Duration(
-                        hours: int.parse(_sleepTimeHController.value.text),
-                        minutes: int.parse(_sleepTimeMController.value.text),
-                      ),
-                      bmi: viewModel.bmi,
-                      stress: viewModel.stress,
-                      diary: viewModel.diary,
-                    );
-                    Firebase.diaries.add(diaryData.toJson());
-                  },
+                  onPressed: () => Firebase.diaries.add(diaryData.toJson()),
                   child: const Text("최종 저장"),
                 );
               }
+
               return TextButton(
                 onPressed: () async {
-                  Diary diaryData = Diary(
-                    id: args.email,
-                    name: args.name,
-                    date: args.date,
-                    text: _dailyController.value.text,
-                    sleep: Duration(
-                      hours: int.parse(_sleepTimeHController.value.text),
-                      minutes: int.parse(_sleepTimeMController.value.text),
-                    ),
-                    bmi: viewModel.bmi,
-                    stress: viewModel.stress,
-                    diary: viewModel.diary,
-                  );
-
                   final diary = await Firebase.queryDiaryfromDate(
                     isGtEq: Timestamp.fromDate(date),
                     isLt: Timestamp.fromDate(
