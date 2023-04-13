@@ -30,6 +30,8 @@ class _InsertDailyState extends State<InsertDaily> {
     _dailyController.dispose();
     _sleepTimeHController.dispose();
     _sleepTimeMController.dispose();
+    _kgController.dispose();
+    _mController.dispose();
     super.dispose();
   }
 
