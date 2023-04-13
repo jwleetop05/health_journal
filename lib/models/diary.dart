@@ -74,7 +74,7 @@ class Diary {
         'sleep': sleep.inSeconds / 60,
         'bmi': bmi,
         'stress': stress.index,
-        'diary': diary.map((e) => e!.toJson()).toList(),
+        'diary': diary.map((e) => e?.toJson() ?? Post(meal: '', exercise: '').toJson()).toList(),
       };
 }
 
