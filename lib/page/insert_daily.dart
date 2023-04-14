@@ -35,7 +35,7 @@ class _InsertDailyState extends State<InsertDaily> {
     super.dispose();
   }
 
-  Widget dailyWrite() {
+  Widget dailyWrite({String? dailyText, int? H, int? M}) {
     Size size = MediaQuery.of(context).size;
     return Column(
       children: [
@@ -57,6 +57,7 @@ class _InsertDailyState extends State<InsertDaily> {
             SizedBox(
               width: size.width * 0.2,
               child: TextFormField(
+                initialValue: "$H",
                 controller: _sleepTimeHController,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
@@ -79,6 +80,7 @@ class _InsertDailyState extends State<InsertDaily> {
             SizedBox(
               width: size.width * 0.2,
               child: TextFormField(
+                initialValue: "$M",
                 controller: _sleepTimeMController,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
@@ -102,10 +104,11 @@ class _InsertDailyState extends State<InsertDaily> {
         ),
         const SizedBox(height: 15),
         SizedBox(
-          child: TextField(
+          child: TextFormField(
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
             ),
+            initialValue: dailyText,
             controller: _dailyController,
             minLines: 10,
             maxLines: 10,
@@ -117,14 +120,14 @@ class _InsertDailyState extends State<InsertDaily> {
     );
   }
 
-  Widget dailyTodo() {
+  Widget dailyTodo({List<Post?>? data}) {
     InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
     Size size = MediaQuery.of(context).size;
     return SizedBox(
       width: size.width,
       height: size.height * 0.5,
       child: PageView(
-        children: Day.values.map((e) {
+        children: Day.values.asMap().entries.map((e) {
           final mealController = TextEditingController();
           final exerciseController = TextEditingController();
           return Column(
@@ -132,7 +135,7 @@ class _InsertDailyState extends State<InsertDaily> {
               SizedBox(
                 width: size.width,
                 child: Text(
-                  e.name,
+                  e.value.name,
                   style: const TextStyle(fontSize: 24),
                   textAlign: TextAlign.start,
                 ),
@@ -141,14 +144,15 @@ class _InsertDailyState extends State<InsertDaily> {
               SizedBox(
                 width: size.width * 0.85,
                 child: Text(
-                  "${e.name}운동",
+                  "${e.value.name}운동",
                   textAlign: TextAlign.start,
                 ),
               ),
               const SizedBox(height: 15),
               SizedBox(
                 width: size.width * 0.85,
-                child: TextField(
+                child: TextFormField(
+                  initialValue: data![e.key]?.exercise ?? "",
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
@@ -163,14 +167,15 @@ class _InsertDailyState extends State<InsertDaily> {
               SizedBox(
                 width: size.width * 0.85,
                 child: Text(
-                  "${e.name} 섭취음식",
+                  "${e.value.name} 섭취음식",
                   textAlign: TextAlign.start,
                 ),
               ),
               const SizedBox(height: 15),
               SizedBox(
                 width: size.width * 0.85,
-                child: TextField(
+                child: TextFormField(
+                  initialValue: data![e.key]?.meal ?? "",
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
@@ -184,7 +189,7 @@ class _InsertDailyState extends State<InsertDaily> {
               const SizedBox(height: 15),
               TextButton(
                 onPressed: () => viewModel.setDiary(
-                  e.index,
+                  e.key,
                   mealController.value.text,
                   exerciseController.value.text,
                 ),
@@ -367,7 +372,7 @@ class _InsertDailyState extends State<InsertDaily> {
               }(),
             ],
           ),
-          StreamBuilder<QuerySnapshot>(
+          StreamBuilder<QuerySnapshot?>(
             stream: Firebase.queryDiaryfromDate(
               isGtEq: Timestamp.fromDate(date),
               isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
@@ -376,7 +381,6 @@ class _InsertDailyState extends State<InsertDaily> {
               if (snapshot.hasError) {
                 return const Text('Error');
               }
-
               final diaryData = Diary(
                 id: args.email,
                 name: args.name,
@@ -404,9 +408,8 @@ class _InsertDailyState extends State<InsertDaily> {
                     isGtEq: Timestamp.fromDate(date),
                     isLt: Timestamp.fromDate(
                       date.add(const Duration(days: 1)),
-                    ),
+                    ), isEqStr: args.email
                   ).get();
-
                   Firebase.diaries
                       .doc(diary.docs.first.id)
                       .set(diaryData.toJson());
@@ -424,7 +427,8 @@ class _InsertDailyState extends State<InsertDaily> {
   Widget build(BuildContext context) {
     InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
     Size size = MediaQuery.of(context).size;
-
+    final args = ModalRoute.of(context)!.settings.arguments as UserDateArgs;
+    final date = DateTime(args.date.year, args.date.month, args.date.day);
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -468,29 +472,71 @@ class _InsertDailyState extends State<InsertDaily> {
             ),
             Positioned(
               bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                width: size.width,
-                height: size.height * 0.6,
-                child: SingleChildScrollView(
-                  child: () {
-                    switch (viewModel.tab) {
-                      case DiaryTab.write:
-                        return dailyWrite();
-                      case DiaryTab.todo:
-                        return dailyTodo();
-                      case DiaryTab.other:
-                        return dailyOther();
-                    }
-                  }(),
-                ),
+              child: StreamBuilder<QuerySnapshot?>(
+                stream: Firebase.queryDiaryfromDate(
+                      isGtEq: Timestamp.fromDate(date),
+                      isLt: Timestamp.fromDate(
+                        date.add(const Duration(days: 1),),
+                      ),
+                      isEqStr: args.email
+                    ).snapshots(),
+                builder: (context, snapshot) {
+                  if(snapshot.hasError) {
+                    return const Text("Error");
+                  } else if(!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      width: size.width,
+                      height: size.height * 0.6,
+                      child: SingleChildScrollView(
+                        child: () {
+                          switch (viewModel.tab) {
+                            case DiaryTab.write:
+                              return dailyWrite();
+                            case DiaryTab.todo:
+                              return dailyTodo();
+                            case DiaryTab.other:
+                              return dailyOther();
+                          }
+                        }(),
+                      ),
+                    );
+                  } else {
+                    viewModel.stress = Stress.values[snapshot.data?.docs[0]['stress']];
+                    viewModel.selected = snapshot.data?.docs[0]['stress'];
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      width: size.width,
+                      height: size.height * 0.6,
+                      child: SingleChildScrollView(
+                        child: () {
+                          switch (viewModel.tab) {
+                            case DiaryTab.write:
+                              return dailyWrite(dailyText: snapshot.data?.docs[0]['text'], H: snapshot.data?.docs[0]['sleep'] ~/ 60, M: snapshot.data?.docs[0]['sleep'] % 60,);
+                            case DiaryTab.todo:
+                              return dailyTodo(data: snapshot.data?.docs[0]['diary']);
+                            case DiaryTab.other:
+                              return dailyOther();
+                          }
+                        }(),
+                      ),
+                    );
+                  }
+                },
               ),
             )
           ],

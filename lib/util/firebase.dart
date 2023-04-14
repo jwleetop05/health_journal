@@ -15,6 +15,7 @@ class Firebase {
     Timestamp? isGt,
     Timestamp? isLtEq,
     Timestamp? isLt,
+    String? isEqStr,
   }) {
     final query = diaries.where(
       'date',
@@ -24,7 +25,7 @@ class Firebase {
       isGreaterThan: isGt,
       isLessThanOrEqualTo: isLtEq,
       isLessThan: isLt,
-    );
+    ).where('id', isEqualTo: isEqStr);
 
     return query;
   }
