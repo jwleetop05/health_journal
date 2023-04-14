@@ -9,13 +9,13 @@ class Firebase {
   static Future<void> write(String a) async {}
 
   static Query queryDiaryfromDate({
+    String? id,
     Timestamp? isEq,
     Timestamp? isNotEq,
     Timestamp? isGtEq,
     Timestamp? isGt,
     Timestamp? isLtEq,
     Timestamp? isLt,
-    String? isEqStr,
   }) {
     final query = diaries.where(
       'date',
@@ -25,7 +25,11 @@ class Firebase {
       isGreaterThan: isGt,
       isLessThanOrEqualTo: isLtEq,
       isLessThan: isLt,
-    ).where('id', isEqualTo: isEqStr);
+    );
+
+    if (id != null) {
+      return query.where('id', isEqualTo: id);
+    }
 
     return query;
   }

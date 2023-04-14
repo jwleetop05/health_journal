@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/models/argument_data.dart';
+import 'package:school_nurse_ofiice/models/diary.dart';
+import 'package:school_nurse_ofiice/models/json.dart';
 import 'package:school_nurse_ofiice/page/todo_view_model.dart';
 import 'package:school_nurse_ofiice/util/auth.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
@@ -61,7 +63,7 @@ class _TodoState extends State<Todo> {
       shrinkWrap: true,
       itemCount: week.length,
       itemBuilder: (context, i) => SizedBox(
-        height: 90,
+        height: 120,
         child: ListTile(
           onTap: () {
             viewModel.day = week[i].day;
@@ -80,9 +82,11 @@ class _TodoState extends State<Todo> {
   }
 
   Widget buildEditor(DateTime dt) {
+    final args = ModalRoute.of(context)!.settings.arguments as LoginArgs;
     final date = DateTime(dt.year, dt.month, dt.day);
     return StreamBuilder<QuerySnapshot>(
       stream: Firebase.queryDiaryfromDate(
+        id: args.user.email,
         isGtEq: Timestamp.fromDate(date),
         isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
       ).snapshots(),
@@ -93,9 +97,9 @@ class _TodoState extends State<Todo> {
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Text('Empty');
         }
-        final data = DateFormat('yyyy-MM-dd-hh-mm')
-            .format(snapshot.data?.docs[0]['date'].toDate());
-        return Text('$data');
+        final doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);
+        final date = DateFormat('yyyy-MM-dd HH:mm').format(doc.date);
+        return Text('$date\n${doc.toJson()}');
       },
     );
   }

@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/models/diary.dart';
+import 'package:school_nurse_ofiice/models/json.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
 
@@ -35,7 +37,7 @@ class _InsertDailyState extends State<InsertDaily> {
     super.dispose();
   }
 
-  Widget dailyWrite({String? dailyText, int? H, int? M}) {
+  Widget dailyWrite({String? dailyText, Duration? time}) {
     Size size = MediaQuery.of(context).size;
     return Column(
       children: [
@@ -57,7 +59,6 @@ class _InsertDailyState extends State<InsertDaily> {
             SizedBox(
               width: size.width * 0.2,
               child: TextFormField(
-                initialValue: "$H",
                 controller: _sleepTimeHController,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
@@ -69,6 +70,7 @@ class _InsertDailyState extends State<InsertDaily> {
                         duration: Duration(seconds: 1),
                       ),
                     );
+                    return;
                   }
                 },
               ),
@@ -80,7 +82,6 @@ class _InsertDailyState extends State<InsertDaily> {
             SizedBox(
               width: size.width * 0.2,
               child: TextFormField(
-                initialValue: "$M",
                 controller: _sleepTimeMController,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
@@ -92,6 +93,7 @@ class _InsertDailyState extends State<InsertDaily> {
                         duration: Duration(seconds: 1),
                       ),
                     );
+                    return;
                   }
                 },
               ),
@@ -108,7 +110,6 @@ class _InsertDailyState extends State<InsertDaily> {
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
             ),
-            initialValue: dailyText,
             controller: _dailyController,
             minLines: 10,
             maxLines: 10,
@@ -128,8 +129,10 @@ class _InsertDailyState extends State<InsertDaily> {
       height: size.height * 0.5,
       child: PageView(
         children: Day.values.asMap().entries.map((e) {
-          final mealController = TextEditingController();
-          final exerciseController = TextEditingController();
+          final mealController =
+              TextEditingController(text: data?[e.key]?.meal);
+          final exerciseController =
+              TextEditingController(text: data?[e.key]?.exercise);
           return Column(
             children: [
               SizedBox(
@@ -152,7 +155,6 @@ class _InsertDailyState extends State<InsertDaily> {
               SizedBox(
                 width: size.width * 0.85,
                 child: TextFormField(
-                  initialValue: data![e.key]?.exercise ?? "",
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
@@ -175,7 +177,6 @@ class _InsertDailyState extends State<InsertDaily> {
               SizedBox(
                 width: size.width * 0.85,
                 child: TextFormField(
-                  initialValue: data![e.key]?.meal ?? "",
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
@@ -374,6 +375,7 @@ class _InsertDailyState extends State<InsertDaily> {
           ),
           StreamBuilder<QuerySnapshot?>(
             stream: Firebase.queryDiaryfromDate(
+              id: args.email,
               isGtEq: Timestamp.fromDate(date),
               isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
             ).snapshots(),
@@ -387,8 +389,8 @@ class _InsertDailyState extends State<InsertDaily> {
                 date: args.date,
                 text: _dailyController.value.text,
                 sleep: Duration(
-                  hours: int.parse(_sleepTimeHController.value.text),
-                  minutes: int.parse(_sleepTimeMController.value.text),
+                  hours: int.tryParse(_sleepTimeHController.value.text) ?? 0,
+                  minutes: int.tryParse(_sleepTimeMController.value.text) ?? 0,
                 ),
                 bmi: viewModel.bmi,
                 stress: viewModel.stress,
@@ -405,11 +407,11 @@ class _InsertDailyState extends State<InsertDaily> {
               return TextButton(
                 onPressed: () async {
                   final diary = await Firebase.queryDiaryfromDate(
+                    id: args.email,
                     isGtEq: Timestamp.fromDate(date),
-                    isLt: Timestamp.fromDate(
-                      date.add(const Duration(days: 1)),
-                    ), isEqStr: args.email
+                    isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
                   ).get();
+
                   Firebase.diaries
                       .doc(diary.docs.first.id)
                       .set(diaryData.toJson());
@@ -430,117 +432,106 @@ class _InsertDailyState extends State<InsertDaily> {
     final args = ModalRoute.of(context)!.settings.arguments as UserDateArgs;
     final date = DateTime(args.date.year, args.date.month, args.date.day);
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Positioned(
-              top: 0,
-              child: Container(
-                width: size.width,
-                height: size.height * 0.4,
-                color: Colors.cyanAccent,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      width: size.width,
-                      height: 56,
-                      top: size.height * 0.4 - 81,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: DiaryTab.values.map((e) {
-                          return TextButton(
-                            onPressed: () {
-                              viewModel.tab = e;
-                            },
-                            style: TextButton.styleFrom(
-                              maximumSize: Size(size.width, 54),
-                              padding: const EdgeInsets.all(20.0),
-                              backgroundColor: Colors.white,
-                              textStyle: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
+      body: Column(
+        children: [
+          Flexible(
+            flex: 9,
+            child: Stack(
+              children: [
+                ExtendedImage.network(
+                  'https://picsum.photos/'
+                  '${size.width.ceil() * 2}/'
+                  '${(size.height * 9 / 25).ceil() * 2}',
+                  width: size.width,
+                  height: size.height * 9 / 25,
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.topCenter,
+                ),
+                Positioned(
+                  height: 54,
+                  bottom: -1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: DiaryTab.values.map((e) {
+                      return InkWell(
+                        onTap: () {
+                          viewModel.tab = e;
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                            color: viewModel.tab == e
+                                ? Colors.white
+                                : Colors.transparent,
+                          ),
+                          width: size.width / 3,
+                          child: Center(
+                            child: Text(
+                              e.name,
+                              style: TextStyle(
+                                color: viewModel.tab == e
+                                    ? Colors.black
+                                    : Colors.white,
                               ),
                             ),
-                            child: Text(e.name),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
+              ],
             ),
-            Positioned(
-              bottom: 0,
-              child: StreamBuilder<QuerySnapshot?>(
-                stream: Firebase.queryDiaryfromDate(
-                      isGtEq: Timestamp.fromDate(date),
-                      isLt: Timestamp.fromDate(
-                        date.add(const Duration(days: 1),),
-                      ),
-                      isEqStr: args.email
-                    ).snapshots(),
-                builder: (context, snapshot) {
-                  if(snapshot.hasError) {
-                    return const Text("Error");
-                  } else if(!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Container(
-                      padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                      ),
-                      width: size.width,
-                      height: size.height * 0.6,
-                      child: SingleChildScrollView(
-                        child: () {
-                          switch (viewModel.tab) {
-                            case DiaryTab.write:
-                              return dailyWrite();
-                            case DiaryTab.todo:
-                              return dailyTodo();
-                            case DiaryTab.other:
-                              return dailyOther();
-                          }
-                        }(),
-                      ),
-                    );
-                  } else {
-                    viewModel.stress = Stress.values[snapshot.data?.docs[0]['stress']];
-                    viewModel.selected = snapshot.data?.docs[0]['stress'];
-                    return Container(
-                      padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                      ),
-                      width: size.width,
-                      height: size.height * 0.6,
-                      child: SingleChildScrollView(
-                        child: () {
-                          switch (viewModel.tab) {
-                            case DiaryTab.write:
-                              return dailyWrite(dailyText: snapshot.data?.docs[0]['text'], H: snapshot.data?.docs[0]['sleep'] ~/ 60, M: snapshot.data?.docs[0]['sleep'] % 60,);
-                            case DiaryTab.todo:
-                              return dailyTodo(data: snapshot.data?.docs[0]['diary']);
-                            case DiaryTab.other:
-                              return dailyOther();
-                          }
-                        }(),
-                      ),
-                    );
-                  }
-                },
-              ),
-            )
-          ],
-        ),
+          ),
+          Flexible(
+            flex: 16,
+            child: StreamBuilder<QuerySnapshot?>(
+              stream: Firebase.queryDiaryfromDate(
+                id: args.email,
+                isGtEq: Timestamp.fromDate(date),
+                isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
+              ).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                }
+
+                Diary? doc;
+                if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                  doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);
+                }
+                return Container(
+                  padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    // borderRadius: BorderRadius.only(
+                    //   topLeft: Radius.circular(20),
+                    //   topRight: Radius.circular(20),
+                    // ),
+                  ),
+                  width: size.width,
+                  child: SingleChildScrollView(
+                    child: () {
+                      switch (viewModel.tab) {
+                        case DiaryTab.write:
+                          return dailyWrite();
+                        case DiaryTab.todo:
+                          return dailyTodo(data: doc?.diary);
+                        case DiaryTab.other:
+                          return dailyOther();
+                      }
+                    }(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
