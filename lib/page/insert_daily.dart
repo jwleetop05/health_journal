@@ -14,7 +14,10 @@ import 'package:school_nurse_ofiice/util/firebase.dart';
 import '../models/argument_data.dart';
 
 class InsertDaily extends StatefulWidget {
-  const InsertDaily({Key? key}) : super(key: key);
+  const InsertDaily({Key? key, required this.diary, }) : super(key: key);
+
+  final InsertDateArgs diary;
+  static const routeName = '/insert';
 
   @override
   State<InsertDaily> createState() => _InsertDailyState();
@@ -206,7 +209,7 @@ class _InsertDailyState extends State<InsertDaily> {
   Widget dailyOther() {
     Size size = MediaQuery.of(context).size;
     InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
-    final args = ModalRoute.of(context)!.settings.arguments as UserDateArgs;
+    final args = ModalRoute.of(context)!.settings.arguments as InsertDateArgs;
     final date = DateTime(args.date.year, args.date.month, args.date.day);
     return SizedBox(
       width: size.width,
@@ -429,7 +432,7 @@ class _InsertDailyState extends State<InsertDaily> {
   Widget build(BuildContext context) {
     InsertViewModel viewModel = Provider.of<InsertViewModel>(context);
     Size size = MediaQuery.of(context).size;
-    final args = ModalRoute.of(context)!.settings.arguments as UserDateArgs;
+    final args = ModalRoute.of(context)!.settings.arguments as InsertDateArgs;
     final date = DateTime(args.date.year, args.date.month, args.date.day);
     return Scaffold(
       body: Column(
@@ -500,7 +503,6 @@ class _InsertDailyState extends State<InsertDaily> {
                 if (snapshot.hasError) {
                   return Text("Error: ${snapshot.error}");
                 }
-
                 Diary? doc;
                 if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                   doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);

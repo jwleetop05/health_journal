@@ -56,8 +56,8 @@ class Diary {
 
   factory Diary.fromJson(JSON json) {
     return Diary(
-      id: 'id',
-      name: 'name',
+      id: json['id'],
+      name: json['name'],
       date: DateTime.now(),
       text: json['text'],
       sleep: Duration(minutes: (json['sleep'] as double).toInt()),

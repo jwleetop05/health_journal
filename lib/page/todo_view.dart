@@ -67,10 +67,10 @@ class _TodoState extends State<Todo> {
         child: ListTile(
           onTap: () {
             viewModel.day = week[i].day;
+
             Navigator.pushNamed(
               context,
               '/insert',
-              arguments: UserDateArgs(week[i], args.user.name, args.user.email),
             );
           },
           tileColor: now.day == week[i].day ? Colors.amber : Colors.white,
@@ -99,7 +99,7 @@ class _TodoState extends State<Todo> {
         }
         final doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);
         final date = DateFormat('yyyy-MM-dd HH:mm').format(doc.date);
-        return Text('$date\n${doc.toJson()}');
+        return Text(date);
       },
     );
   }
