@@ -31,11 +31,24 @@ class _InsertDailyState extends State<InsertDaily> {
   final TextEditingController _mController = TextEditingController();
   @override
   void initState() {
-    _dailyController.text = widget.insertData.diary.text!;
-    _sleepTimeHController.text = (widget.insertData.diary.sleep.inSeconds ~/ 60) as String;
-    _sleepTimeMController.text = (widget.insertData.diary.sleep.inSeconds % 60) as String;
-    _kgController.text = widget.insertData.diary.kg! as String;
-    _mController.text = widget.insertData.diary.m! as String;
+    _dailyController.text = widget.insertData.diary?.text ?? "";
+    if(widget.insertData.diary?.sleep == null) {
+      _sleepTimeHController.text = "";
+      _sleepTimeMController.text = "";
+    } else {
+      _sleepTimeHController.text = "${widget.insertData.diary!.sleep.inSeconds ~/ 3600}";
+      _sleepTimeMController.text = "${widget.insertData.diary!.sleep.inSeconds % 3600 ~/ 60}";
+    }
+    if(widget.insertData.diary?.kg == null) {
+      _kgController.text = "";
+    } else {
+      _kgController.text = widget.insertData.diary?.kg as String;
+    }
+    if(widget.insertData.diary?.m == null) {
+      _mController.text = "";
+    } else {
+      _mController.text = widget.insertData.diary?.m as String;
+    }
     super.initState();
   }
   @override

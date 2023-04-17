@@ -10,10 +10,10 @@ import 'package:school_nurse_ofiice/util/auth.dart';
 import 'package:school_nurse_ofiice/util/firebase.dart';
 
 class Todo extends StatefulWidget {
-  const Todo({Key? key}) : super(key: key);
+  const Todo({Key? key, required this.userData}) : super(key: key);
 
   static const routeName = '/todo';
-
+  final LoginArgs userData;
   @override
   State<Todo> createState() => _TodoState();
 }
@@ -57,8 +57,6 @@ class _TodoState extends State<Todo> {
   }
 
   Widget buildList() {
-    final viewModel = Provider.of<TodoViewModel>(context);
-    final args = ModalRoute.of(context)!.settings.arguments as LoginArgs;
     final now = DateTime.now();
     final week = List.generate(7, (i) => now.subtract(Duration(days: i)));
     return ListView.builder(
@@ -66,42 +64,56 @@ class _TodoState extends State<Todo> {
       itemCount: week.length,
       itemBuilder: (context, i) => SizedBox(
         height: 120,
-        child: ListTile(
-          onTap: () {
-            viewModel.day = week[i].day;
-
-            Navigator.pushNamed(
-              context,
-              '/insert',
-            );
-          },
-          tileColor: now.day == week[i].day ? Colors.amber : Colors.white,
-          leading: Text(DateFormat('MM/dd').format(week[i])),
-          title: buildEditor(week[i]),
-        ),
+        child: buildEditor(week[i], now)
       ),
     );
   }
 
-  Widget buildEditor(DateTime dt) {
-    final args = ModalRoute.of(context)!.settings.arguments as LoginArgs;
+  Widget buildEditor(DateTime dt, DateTime now) {
+    final viewModel = Provider.of<TodoViewModel>(context);
     final date = DateTime(dt.year, dt.month, dt.day);
     return StreamBuilder<QuerySnapshot>(
       stream: Firebase.queryDiaryfromDate(
-        id: args.user.email,
+        id: widget.userData.user.email,
         isGtEq: Timestamp.fromDate(date),
         isLt: Timestamp.fromDate(date.add(const Duration(days: 1))),
       ).snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('Error');
-        }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Text('Empty');
-        }
-        final doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);
-        final date = DateFormat('yyyy-MM-dd HH:mm').format(doc.date);
-        return Text(date);
+        return ListTile(
+          onTap: () {
+            viewModel.day = dt.day;
+            if (snapshot.hasError) {
+              return print(snapshot.error);
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              Navigator.pushNamed(
+                  context,
+                  '/insert',
+                  arguments: InsertDataArgs(date: dt, name: widget.userData.user.name, email: widget.userData.user.email, diary: null)
+              );
+              return print("route");
+            }
+            final doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);
+            Navigator.pushNamed(
+                context,
+                '/insert',
+                arguments: InsertDataArgs(date: dt, name: widget.userData.user.name, email: widget.userData.user.email, diary: doc)
+            );
+          },
+          tileColor: now.day == dt.day ? Colors.amber : Colors.white,
+          leading: Text(DateFormat('MM/dd').format(dt)),
+          title: () {
+            if (snapshot.hasError) {
+              return const Text('Error');
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Text('Empty');
+            }
+            final doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);
+            final date = DateFormat('yyyy-MM-dd HH:mm').format(doc.date);
+            return Text(date);
+          }(),
+        );
       },
     );
   }

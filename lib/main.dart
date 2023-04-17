@@ -6,6 +6,7 @@ import 'package:school_nurse_ofiice/page/login_page.dart';
 import 'package:school_nurse_ofiice/page/teacher_page.dart';
 import 'package:school_nurse_ofiice/page/todo_view.dart';
 import 'package:school_nurse_ofiice/page/todo_view_model.dart';
+import 'package:school_nurse_ofiice/util/customPageRoute.dart';
 import 'models/argument_data.dart';
 import 'page/insert_daily.dart';
 
@@ -26,38 +27,35 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => InsertViewModel()),
       ],
       child: MaterialApp(
-        initialRoute: '/login',
+        initialRoute: LoginPage.routeName,
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case InsertDaily.routeName:
-              final args = settings.arguments as InsertDataArgs;
-              MaterialPageRoute(
-                builder: (context) {
-                  return InsertDaily(insertData: args);
-                },
-              );
-              break;
+              final args = settings.arguments as InsertDataArgs?;
+              return CustomPageRoute(
+                  child: InsertDaily(
+                    insertData: args!,
+                  ),
+                  settings: settings);
             case LoginPage.routeName:
-              MaterialPageRoute(
+              return MaterialPageRoute(
                 builder: (context) {
                   return const LoginPage();
                 },
               );
-              break;
             case Todo.routeName:
-              MaterialPageRoute(
+              final args = settings.arguments as LoginArgs;
+              return MaterialPageRoute(
                 builder: (context) {
-                  return const Todo();
+                  return Todo(userData: args,);
                 },
               );
-              break;
             case TeacherPage.routeName:
-              MaterialPageRoute(
+              return MaterialPageRoute(
                 builder: (context) {
                   return const TeacherPage();
                 },
               );
-              break;
           }
         },
       ),
