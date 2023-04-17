@@ -5,8 +5,8 @@ class CustomPageRoute extends PageRouteBuilder {
 
   CustomPageRoute({required this.child, RouteSettings? settings})
       : super(
-            transitionDuration: const Duration(milliseconds: 500),
-            reverseTransitionDuration: const Duration(milliseconds: 500),
+            transitionDuration: const Duration(seconds: 1),
+            reverseTransitionDuration: const Duration(seconds: 1),
             pageBuilder: (context, animation, secondaryAnimation) => child,
             settings: settings);
 
@@ -14,8 +14,10 @@ class CustomPageRoute extends PageRouteBuilder {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation, Widget child) =>
       SlideTransition(
-        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-            .animate(animation),
+        position: Tween<Offset>(
+          begin: const Offset(1, 0),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: Curves.ease)).animate(animation),
         child: child,
       );
 }
