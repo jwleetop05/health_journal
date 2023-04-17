@@ -42,7 +42,8 @@ class Diary {
   final num? bmi;
   final Stress stress;
   final List<Post?> diary;
-
+  final num? kg;
+  final num? m;
   const Diary({
     required this.id,
     required this.name,
@@ -52,6 +53,8 @@ class Diary {
     required this.bmi,
     required this.stress,
     required this.diary,
+    required this.kg,
+    required this.m
   });
 
   factory Diary.fromJson(JSON json) {
@@ -64,6 +67,8 @@ class Diary {
       bmi: json['bmi'],
       stress: Stress.values[json['stress']],
       diary: (json['diary'] as List).map((e) => Post.fromJson(e)).toList(),
+      kg: json['kg'],
+      m: json['m']
     );
   }
   JSON toJson() => {
@@ -72,10 +77,12 @@ class Diary {
         'date': date,
         'text': text,
         'sleep': sleep.inSeconds / 60,
+        'kg' : kg,
+        'm' : m,
         'bmi': bmi,
         'stress': stress.index,
         'diary': diary.map((e) => e?.toJson() ?? Post(meal: '', exercise: '').toJson()).toList(),
-      };
+  };
 }
 
 class Post {

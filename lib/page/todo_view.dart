@@ -12,6 +12,8 @@ import 'package:school_nurse_ofiice/util/firebase.dart';
 class Todo extends StatefulWidget {
   const Todo({Key? key}) : super(key: key);
 
+  static const routeName = '/todo';
+
   @override
   State<Todo> createState() => _TodoState();
 }

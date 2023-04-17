@@ -8,12 +8,12 @@ class LoginArgs {
   LoginArgs(this.user);
 }
 
-class InsertDateArgs {
+class InsertDataArgs {
   final DateTime date;
   final String name;
   final String email;
   final Diary diary;
-  InsertDateArgs(
+  InsertDataArgs(
     this.date,
     this.name,
     this.email,

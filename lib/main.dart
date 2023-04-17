@@ -28,20 +28,37 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         initialRoute: '/login',
         onGenerateRoute: (settings) {
-            switch(settings.name) {
-              case InsertDaily.routeName:
-                final args = settings.arguments as InsertDateArgs;
-                MaterialPageRoute(
-                  builder: (context) {
-                    return InsertDaily(diary: args);
-                  },
-                );
-            }
-        },
-        routes: {
-          '/login': (context) => const LoginPage(),
-          '/todo': (context) => const Todo(),
-          '/teacher': (context) => const TeacherPage(),
+          switch (settings.name) {
+            case InsertDaily.routeName:
+              final args = settings.arguments as InsertDataArgs;
+              MaterialPageRoute(
+                builder: (context) {
+                  return InsertDaily(insertData: args);
+                },
+              );
+              break;
+            case LoginPage.routeName:
+              MaterialPageRoute(
+                builder: (context) {
+                  return const LoginPage();
+                },
+              );
+              break;
+            case Todo.routeName:
+              MaterialPageRoute(
+                builder: (context) {
+                  return const Todo();
+                },
+              );
+              break;
+            case TeacherPage.routeName:
+              MaterialPageRoute(
+                builder: (context) {
+                  return const TeacherPage();
+                },
+              );
+              break;
+          }
         },
       ),
     );
