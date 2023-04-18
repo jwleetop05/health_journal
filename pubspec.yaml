@@ -45,6 +45,7 @@ dependencies:
   http: ^0.13.5
   intl: ^0.18.0
   extended_image: ^6.4.1
+  table_calendar: ^3.0.9
 
 dev_dependencies:
   flutter_test:
