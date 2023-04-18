@@ -64,7 +64,7 @@ class _TodoState extends State<Todo> {
       itemCount: week.length,
       itemBuilder: (context, i) => SizedBox(
         height: 120,
-        child: buildEditor(week[i], now)
+        child: buildEditor(week[i], now),
       ),
     );
   }
@@ -87,17 +87,26 @@ class _TodoState extends State<Todo> {
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               Navigator.pushNamed(
-                  context,
-                  '/insert',
-                  arguments: InsertDataArgs(date: dt, name: widget.userData.user.name, email: widget.userData.user.email, diary: null)
+                context,
+                '/insert',
+                arguments: InsertDataArgs(
+                  date: dt,
+                  name: widget.userData.user.name,
+                  email: widget.userData.user.email,
+                ),
               );
               return print("route");
             }
             final doc = Diary.fromJson(snapshot.data!.docs[0].data() as JSON);
             Navigator.pushNamed(
-                context,
-                '/insert',
-                arguments: InsertDataArgs(date: dt, name: widget.userData.user.name, email: widget.userData.user.email, diary: doc)
+              context,
+              '/insert',
+              arguments: InsertDataArgs(
+                date: dt,
+                name: widget.userData.user.name,
+                email: widget.userData.user.email,
+                diary: doc,
+              ),
             );
           },
           tileColor: now.day == dt.day ? Colors.amber : Colors.white,

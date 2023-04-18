@@ -14,7 +14,10 @@ import 'package:school_nurse_ofiice/util/firebase.dart';
 import '../models/argument_data.dart';
 
 class InsertDaily extends StatefulWidget {
-  const InsertDaily({Key? key, required this.insertData, }) : super(key: key);
+  const InsertDaily({
+    Key? key,
+    required this.insertData,
+  }) : super(key: key);
 
   final InsertDataArgs insertData;
   static const routeName = '/insert';
@@ -31,26 +34,17 @@ class _InsertDailyState extends State<InsertDaily> {
   final TextEditingController _mController = TextEditingController();
   @override
   void initState() {
-    _dailyController.text = widget.insertData.diary?.text ?? "";
-    if(widget.insertData.diary?.sleep == null) {
-      _sleepTimeHController.text = "";
-      _sleepTimeMController.text = "";
-    } else {
-      _sleepTimeHController.text = "${widget.insertData.diary!.sleep.inSeconds ~/ 3600}";
-      _sleepTimeMController.text = "${widget.insertData.diary!.sleep.inSeconds % 3600 ~/ 60}";
-    }
-    if(widget.insertData.diary?.kg == null) {
-      _kgController.text = "";
-    } else {
-      _kgController.text = widget.insertData.diary?.kg as String;
-    }
-    if(widget.insertData.diary?.m == null) {
-      _mController.text = "";
-    } else {
-      _mController.text = widget.insertData.diary?.m as String;
+    final diary = widget.insertData.diary;
+    if (diary != null) {
+      _dailyController.text = diary.text ?? "";
+      _sleepTimeHController.text = "${diary.sleep.inSeconds ~/ 3600}";
+      _sleepTimeMController.text = "${diary.sleep.inSeconds / 60 % 60}";
+      _kgController.text = "${diary.kg ?? ""}";
+      _mController.text = "${diary.m ?? ""}";
     }
     super.initState();
   }
+
   @override
   void dispose() {
     _dailyController.dispose();

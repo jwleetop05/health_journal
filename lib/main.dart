@@ -33,29 +33,24 @@ class MyApp extends StatelessWidget {
             case InsertDaily.routeName:
               final args = settings.arguments as InsertDataArgs?;
               return CustomPageRoute(
-                  child: InsertDaily(
-                    insertData: args!,
-                  ),
-                  settings: settings);
+                child: InsertDaily(insertData: args!),
+                settings: settings,
+              );
             case LoginPage.routeName:
               return MaterialPageRoute(
-                builder: (context) {
-                  return const LoginPage();
-                },
+                builder: (context) => const LoginPage(),
               );
             case Todo.routeName:
               final args = settings.arguments as LoginArgs;
               return MaterialPageRoute(
-                builder: (context) {
-                  return Todo(userData: args,);
-                },
+                builder: (context) => Todo(userData: args),
               );
             case TeacherPage.routeName:
               return MaterialPageRoute(
-                builder: (context) {
-                  return const TeacherPage();
-                },
+                builder: (context) => const TeacherPage(),
               );
+            default:
+              return null;
           }
         },
       ),

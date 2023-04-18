@@ -13,10 +13,11 @@ class InsertDataArgs {
   final String name;
   final String email;
   final Diary? diary;
+
   InsertDataArgs({
     required this.date,
     required this.name,
     required this.email,
-    required this.diary,
-});
+    this.diary,
+  });
 }
