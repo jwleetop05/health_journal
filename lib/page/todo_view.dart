@@ -40,6 +40,7 @@ class _TodoState extends State<Todo> {
               TextButton(
                 onPressed: () {
                   Auth.signOut();
+                  Navigator.pushNamed(context, '/login');
                 },
                 child: const Text("로그아웃"),
               ),

@@ -4,15 +4,18 @@ import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
 import 'package:school_nurse_ofiice/page/login_page.dart';
 import 'package:school_nurse_ofiice/page/teacher_page.dart';
+import 'package:school_nurse_ofiice/page/teacher_view_model.dart';
 import 'package:school_nurse_ofiice/page/todo_view.dart';
 import 'package:school_nurse_ofiice/page/todo_view_model.dart';
 import 'package:school_nurse_ofiice/util/customPageRoute.dart';
 import 'models/argument_data.dart';
 import 'page/insert_daily.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await initializeDateFormatting();
   runApp(const MyApp());
 }
 
@@ -25,6 +28,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => TodoViewModel()),
         ChangeNotifierProvider(create: (_) => InsertViewModel()),
+        ChangeNotifierProvider(create: (_) => TeacherViewModel()),
       ],
       child: MaterialApp(
         initialRoute: LoginPage.routeName,
@@ -46,8 +50,9 @@ class MyApp extends StatelessWidget {
                 builder: (context) => Todo(userData: args),
               );
             case TeacherPage.routeName:
+              final args = settings.arguments as LoginArgs;
               return MaterialPageRoute(
-                builder: (context) => const TeacherPage(),
+                builder: (context) => TeacherPage(userData: args),
               );
             default:
               return null;
