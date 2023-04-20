@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_nurse_ofiice/models/json.dart';
 
 enum Stress {
@@ -61,7 +62,7 @@ class Diary {
     return Diary(
       id: json['id'],
       name: json['name'],
-      date: DateTime.now(),
+      date: DateTime.fromMillisecondsSinceEpoch((json['date'] as Timestamp).seconds * 1000),
       text: json['text'],
       sleep: Duration(minutes: (json['sleep'] as double).toInt()),
       bmi: json['bmi'],
