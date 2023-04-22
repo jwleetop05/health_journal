@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_nurse_ofiice/page/insert_view_model.dart';
 import 'package:school_nurse_ofiice/page/login_page.dart';
+import 'package:school_nurse_ofiice/page/teacher_diary_detail.dart';
 import 'package:school_nurse_ofiice/page/teacher_page.dart';
 import 'package:school_nurse_ofiice/page/teacher_view_model.dart';
 import 'package:school_nurse_ofiice/page/todo_view.dart';
@@ -53,6 +54,11 @@ class MyApp extends StatelessWidget {
               final args = settings.arguments as LoginArgs;
               return MaterialPageRoute(
                 builder: (context) => TeacherPage(userData: args),
+              );
+            case TeacherDiaryDetail.routeName:
+              final args = settings.arguments as DetailPageArgs?;
+              return MaterialPageRoute(
+                builder: (context) => TeacherDiaryDetail(diary: args),
               );
             default:
               return null;

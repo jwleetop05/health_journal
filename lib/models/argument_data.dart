@@ -21,3 +21,11 @@ class InsertDataArgs {
     this.diary,
   });
 }
+
+class DetailPageArgs {
+  final Diary? diary;
+
+  DetailPageArgs({
+    required this.diary,
+  });
+}

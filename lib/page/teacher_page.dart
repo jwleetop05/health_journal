@@ -72,7 +72,8 @@ class _TeacherPageState extends State<TeacherPage> {
                                   title: Text("error : ${snapshot.error}"),
                                 ),
                               );
-                            } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
                               return Container(
                                 height: 120,
                                 child: const ListTile(
@@ -85,7 +86,8 @@ class _TeacherPageState extends State<TeacherPage> {
                                   i++) {
                                 doc = Diary.fromJson(
                                     snapshot.data!.docs[i].data() as JSON);
-                                if (DateFormat("yyyy-MM-dd").format(doc!.date) ==
+                                if (DateFormat("yyyy-MM-dd")
+                                        .format(doc!.date) ==
                                     DateFormat("yyyy-MM-dd")
                                         .format(viewModel.selectDay)) {
                                   break;
@@ -109,12 +111,18 @@ class _TeacherPageState extends State<TeacherPage> {
                                             .format(doc?.date ?? DateTime(1)) ==
                                         DateFormat("yyyy-MM-dd")
                                             .format(viewModel.selectDay)) {
-                                      return Container(
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context, "/TeacherDetail", arguments: DetailPageArgs(diary: doc));
+                                        },
+                                        child: SizedBox(
                                           height: 120,
                                           child: ListTile(
                                             title: Text(doc?.name ?? ""),
                                             subtitle: Text(doc?.text ?? ""),
-                                          ));
+                                          ),
+                                        ),
+                                      );
                                     } else {
                                       return Center(
                                           child: ListTile(
